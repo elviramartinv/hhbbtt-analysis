@@ -112,6 +112,7 @@ class Config_ul_2018(base_config):
             # Wjets
             Dataset("wjets",
                 folder=p + "WJetsToLNu",
+                selection="event != 198018547",
                 process=self.processes.get("wjets"),
                 # prefix="xrootd-cms.infn.it//",
                 xs=61526.7,
