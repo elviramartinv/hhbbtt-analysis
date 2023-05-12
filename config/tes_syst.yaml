@@ -1,0 +1,13 @@
+svfit_tes_up:
+    name: SVFitRDF
+    path: Tools.Tools.svfit
+    parameters:
+        isMC: self.dataset.process.isMC
+        tau_syst: corr_up
+
+svfit_tes_down:
+    name: SVFitRDF
+    path: Tools.Tools.svfit
+    parameters:
+        isMC: self.dataset.process.isMC
+        tau_syst: corr_down

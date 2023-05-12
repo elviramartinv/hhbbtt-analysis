@@ -342,7 +342,7 @@ class Config(cmt_config):
         
     
     def add_datasets(self):
-        skim_directory = "/eos/user/j/jmotta/SKIMMED_Legacy2018_16Feb2021_HHbtag"
+        skim_directory = "/eos/user/j/jmotta/SKIMMED_Legacy2018_16Feb2021_HHbtag_ETau"
         datasets = [
             Dataset("vbf_sm",
                 folder=os.path.join(skim_directory, "SKIM_VBFHH_CV_1_C2V_1_C3_1_xs"),
@@ -498,36 +498,15 @@ class Config(cmt_config):
                 xs=1.),  # already normalised to xs
 
             # DATA
-            Dataset("data_mutau",
-                folder=[os.path.join(skim_directory, "SKIM_SingleMuon2018%s" % era)
-                    for era in ["A", "B", "C", "D"]],
-                selection="pairType == 0",
-                process=self.processes.get("data_mutau"),
-                file_pattern="output_.*root",
-                merging={
-                    "mutau": 40,
-                },
-                xs=1.),  # already normalised to xs
 
             Dataset("data_etau",
-                folder=[os.path.join(skim_directory, "SKIM_SingleElectron2018%s" % era)
+                folder=[os.path.join("/eos/user/j/jmotta/SKIMMED_Legacy2018_16Feb2021_HHbtag", "SKIM_SingleElectron2018%s" % era)
                     for era in ["A", "B", "C", "D"]],
                 selection="pairType == 1",
                 process=self.processes.get("data_etau"),
                 file_pattern="output_.*root",
                 merging={
                     "etau": 1,
-                },
-                xs=1.),  # already normalised to xs
-
-            Dataset("data_tautau",
-                selection="pairType == 2",
-                folder=[os.path.join(skim_directory, "SKIM_Tau2018%s" % era)
-                    for era in ["A", "B", "C", "D"]],
-                process=self.processes.get("data_tau"),
-                file_pattern="output_.*root",
-                merging={
-                    "mutau": 20,
                 },
                 xs=1.),  # already normalised to xs
         ]

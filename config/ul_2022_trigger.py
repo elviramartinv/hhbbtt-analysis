@@ -37,4 +37,23 @@ class Config_ul_2022(base_config):
         ]
         return ObjectCollection(datasets)
 
+    def add_weights(self):
+        weights = DotDict()
+        weights.default = "1"
+        # weights.total_events_weights = ["genWeight", "puWeight", "DYstitchWeight"]
+        weights.total_events_weights = ["genWeight"]
+
+        weights.mutau = ["genWeight", "prescaleWeight", "trigSF",
+            "idAndIsoAndFakeSF", "L1PreFiringWeight", "PUjetID_SF",
+            "bTagweightReshape"]
+
+        weights.etau = weights.mutau
+        weights.tautau = weights.mutau
+        weights.base_selection = weights.mutau
+        weights.base = weights.mutau
+
+        # weights.channels_mult = {channel: jrs(weights.channels[channel], op="*")
+            # for channel in weights.channels}
+        return weights
+
 config = Config_ul_2022("ul_2022_trigger", year=2022, ecm=13.6, lumi_pb=1, isRun3=True)

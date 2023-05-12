@@ -9,7 +9,7 @@ import json
 class FeaturePlotLLR(FeaturePlot):
 
     def __init__(self, *args, **kwargs):
-        super(FeaturePlotLLR, self).__init__(self, *args, **kwargs)
+        super(FeaturePlotLLR, self).__init__(*args, **kwargs)
         self.tree_name = "HTauTauTree"
 
     def requires(self):
@@ -25,7 +25,7 @@ class FeaturePlotLLR(FeaturePlot):
 
         if self.do_qcd:
             reqs["qcd"] = {
-                key: self.req(self, region_name=region.name, blinded=False, hide_data=False,
+                key: FeaturePlotLLR.vreq(self, region_name=region.name, blinded=False, hide_data=False,
                     do_qcd=False, stack=True, save_root=True, save_pdf=True, save_yields=False,
                     remove_horns=False,_exclude=["feature_tags", "shape_region",
                     "qcd_category_name", "qcd_sym_shape", "qcd_signal_region_wp"])
@@ -70,7 +70,7 @@ class FeaturePlotLLR(FeaturePlot):
 
 class VBFFeaturePlotLLR(VBFFeaturePlot):
     def __init__(self, *args, **kwargs):
-        super(VBFFeaturePlotLLR, self).__init__(self, *args, **kwargs)
+        super(VBFFeaturePlotLLR, self).__init__(*args, **kwargs)
         self.tree_name = "HTauTauTree"
 
     def get_nevents(self):

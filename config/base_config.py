@@ -77,12 +77,18 @@ class Config(cmt_config):
                 "dau2_idDeepTau2017v2p1VSjet < %s" % self.deeptau.vsjet.Medium],
         }
         regions = []
+        for channel in self.channels:
+            regions.append(channel)
+            regions.append(
+                Category(channel.name + "_os", label=channel.label,
+                    selection=" (%s) && (isOS == 1)" % channel.selection)
+            )
         for ikey, key in enumerate(selection):
             regions.append(Category(key, label=Label(region_names[ikey]),
                 selection=self.join_selection_channels(selection[key])))
             for channel in self.channels:
                 regions.append(Category("_".join([channel.name, key]),
-                    label=Label(", ".join([channel.label.root, region_names[ikey]])),
+                    label=Label(", ".join([channel.label.root + " channel", region_names[ikey]])),
                     selection=jrs(channel.selection,
                         jrs(selection[key][channel.name], op="and"), op="and")))
         return ObjectCollection(regions)
@@ -177,12 +183,15 @@ class Config(cmt_config):
                     "|| Tau_pt[Tau_pt > 17].size() > 1)"
                     "&& Jet_pt[Jet_pt > 17].size() > 0"),
             # Category("dum", "dummy category", selection="event == 220524669"),
-            Category("dum", "dummy category", selection="event == 2"),
-            Category("mutau", "#mu#tau channel", selection="pairType == 0"),
-            Category("etau", "e#tau channel", selection="pairType == 1"),
+            Category("dum", "dummy category", selection="event == 74472670"),
+            Category("mutau", "#tau_{#mu}#tau_{h} channel", selection="pairType == 0",
+                skip_processes=["data_etau", "data_tau"]),
+            Category("etau", "#tau_{e}#tau_{h} channel", selection="pairType == 1",
+                skip_processes=["data_mutau", "data_tau"]),
             # Category("etau", "e#tau channel", selection="pairType >= -999"),
             # Category("etau", "e#tau channel", selection="1."),
-            Category("tautau", "#tau#tau channel", selection="pairType == 2"),
+            Category("tautau", "#tau_{h}#tau_{h} channel", selection="pairType == 2",
+                skip_processes=["data_etau", "data_mutau"]),
             Category("resolved_1b", label="Resolved 1b category",
                 selection=sel["resolved_1b_combined"]),
             Category("resolved_2b", label="Resolved 2b category",
@@ -200,9 +209,9 @@ class Config(cmt_config):
 
     def add_processes(self):
         processes = [
-            Process("ggf", Label("HH_{ggF}"), color=(255, 0, 0), isSignal=True, llr_name="ggH"),
-            Process("ggf_sm", Label("HH_{ggF}"), color=(255, 0, 0), isSignal=True,
-                parent_process="ggf"),
+            Process("ggf", Label("HH_{ggF}"), color=(0, 0, 0), isSignal=True, llr_name="ggH"),
+            Process("ggf_sm", Label("HH_{ggF}"), color=(0, 0, 0), isSignal=True,
+                parent_process="ggf", llr_name="ggHH_kl_1_kt_1_hbbhtt"),
             Process("ggf_0_1", Label("HH_{ggF}^{(0, 1)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="ggf"),
             Process("ggf_2p45_1", Label("HH_{ggF}^{(2.45, 1)}"), color=(0, 0, 0), isSignal=True,
@@ -216,21 +225,18 @@ class Config(cmt_config):
                 isSignal=True, parent_process="vbf"),
             Process("vbf_1p5_1_1", Label("HH_{VBF}^{(1.5,1,1)}"), color=(0, 0, 0),
                 isSignal=True, parent_process="vbf"),
-            # Process("vbf_1_0_1", Label("HH_{VBF}^{(1,0,1)}"), color=(255, 153, 0),
-                # isSignal=True, parent_process="vbf"),
-            Process("vbf_1_0_1", Label("HH_{VBF}^{#kappa_{2V} = 0}"), color=(255, 153, 0),
+            Process("vbf_1_0_1", Label("HH_{VBF}^{(1,0,1)}"), color=(255, 153, 0),
                 isSignal=True, parent_process="vbf"),
             Process("vbf_1_1_0", Label("HH_{VBF}^{(1,1,0)}"), color=(0, 0, 0),
                 isSignal=True, parent_process="vbf"),
             Process("vbf_1_1_2", Label("HH_{VBF}^{(1,1,2)}"),
                 color=(0, 0, 0), isSignal=True, parent_process="vbf"),
-            # Process("vbf_1_2_1", Label("HH_{VBF}^{(1,2,1)}"),
-                # color=(255, 102, 102), isSignal=True, parent_process="vbf"),
-            Process("vbf_1_2_1", Label("HH_{VBF}^{#kappa_{2V} = 2}"),
+            Process("vbf_1_2_1", Label("HH_{VBF}^{(1,2,1)}"),
                 color=(255, 102, 102), isSignal=True, parent_process="vbf"),
 
             Process("dy", Label("DY"), color=(255, 102, 102), isDY=True, llr_name="DY"),
             Process("dy_high", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
+            Process("dy_low", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
 
             Process("tt", Label("t#bar{t}"), color=(255, 153, 0), llr_name="TT"),
             Process("tt_dl", Label("t#bar{t} DL"), color=(205, 0, 9), parent_process="tt"),
@@ -251,6 +257,14 @@ class Config(cmt_config):
                 llr_name="TW"),
             Process("singlet", Label("Single t"), color=(134, 136, 138), parent_process="others",
                 llr_name="singleT"),
+            Process("ewk", Label("EWK"), color=(134, 136, 138), parent_process="others"),
+            Process("zh", Label("ZH"), color=(134, 136, 138), parent_process="others"),
+            Process("wh", Label("WH"), color=(134, 136, 138), parent_process="others"),
+            Process("ttx", Label("ttX"), color=(134, 136, 138), parent_process="others"),
+            Process("ggh", Label("ggH"), color=(134, 136, 138), parent_process="others"),
+            Process("vbfh", Label("VBFH"), color=(134, 136, 138), parent_process="others"),
+            Process("vv", Label("VV"), color=(134, 136, 138), parent_process="others"),
+            Process("vvv", Label("VVV"), color=(134, 136, 138), parent_process="others"),
 
             Process("data", Label("Data"), color=(0, 0, 0), isData=True),
             Process("data_tau", Label("Data"), color=(0, 0, 0), parent_process="data", isData=True),
@@ -260,10 +274,24 @@ class Config(cmt_config):
 
         process_group_names = {
             "default": [
+                # "ggf_sm",
+                # "data_tau",
+                # "dy_high",
+                # "tt_dl",
+                "data",
+                "dy",
+                "tt",
+                "others"
+            ],
+            "main": [
+                # "ggf_sm",
+                # "data_tau",
+                # "dy_high",
+                # "tt_dl",
+                "dy",
+                "tt",
                 "ggf_sm",
-                "data_tau",
-                "dy_high",
-                "tt_dl",
+                "vbf_sm",
             ],
             "test": [
                 "ggf_sm",
@@ -282,7 +310,6 @@ class Config(cmt_config):
             ],
             "signal": [
                 "ggf_sm",
-                "vbf_sm",
             ],
             "etau": [
                 "tt_dl",
@@ -298,6 +325,14 @@ class Config(cmt_config):
                 "tt_fh",
                 "dy",
                 "others",
+                "data_mutau",
+            ],
+            "mutau_wjets": [
+                "tt_dl",
+                "tt_sl",
+                "tt_fh",
+                "dy",
+                "wjets",
                 "data_mutau",
             ],
             "tautau": [
@@ -337,13 +372,18 @@ class Config(cmt_config):
     def add_features(self):
         features = [
             Feature("jet_pt", "Jet_pt", binning=(10, 50, 150),
-                x_title=Label("jet p_{t}"),
+                x_title=Label("jet p_{T}"),
                 units="GeV"),
 
             # bjet features
             Feature("bjet1_pt", "Jet_pt.at(bjet1_JetIdx)", binning=(10, 50, 150),
-                x_title=Label("b_{1} p_{t}"),
+                x_title=Label("b_{1} p_{T}"),
                 units="GeV",
+                central="jet_smearing"),
+            Feature("bjet1_pt_eta2p1", "Jet_pt.at(bjet1_JetIdx)", binning=(10, 50, 150),
+                x_title=Label("b_{1} p_{T}"),
+                units="GeV",
+                selection="abs({{bjet1_eta}}) < 2.1",
                 central="jet_smearing"),
             Feature("bjet1_eta", "Jet_eta.at(bjet1_JetIdx)", binning=(20, -5., 5.),
                 x_title=Label("b_{1} #eta")),
@@ -354,7 +394,7 @@ class Config(cmt_config):
                 units="GeV",
                 central="jet_smearing"),
             Feature("bjet2_pt", "Jet_pt.at(bjet2_JetIdx)", binning=(10, 50, 150),
-                x_title=Label("b_2 p_t"),
+                x_title=Label("b_{2} p_{T}"),
                 units="GeV",
                 central="jet_smearing"),
             Feature("bjet2_eta", "Jet_eta.at(bjet2_JetIdx)", binning=(20, -5., 5.),
@@ -405,6 +445,19 @@ class Config(cmt_config):
                 central="jet_smearing"),
 
             # lepton features
+             Feature("tau_pt", "Tau_pt", binning=(75, 0, 150),
+                x_title=Label("#tau p_{t}"),
+                units="GeV"),
+            Feature("tau_pt_tes", "Tau_pt_corr", binning=(75, 0, 150),
+                x_title=Label("#tau p_{t}"),
+                units="GeV"),
+            Feature("tau_mass", "Tau_mass", binning=(52, 0.2, 1.5),
+                x_title=Label("#tau m"),
+                units="GeV"),
+            Feature("tau_mass_tes", "Tau_mass_corr", binning=(52, 0.2, 1.5),
+                x_title=Label("#tau m"),
+                units="GeV"),
+
             Feature("lep1_pt", "dau1_pt", binning=(10, 50, 150),
                 x_title=Label("#tau_{1} p_{t}"),
                 units="GeV",
@@ -481,8 +534,8 @@ class Config(cmt_config):
                 systematics=["tes"]),
             Feature("Htt_svfit_mass", "Htt_svfit_mass", binning=(30, 0, 300),
                 x_title=Label("H(#tau^{+} #tau^{-}) m (SVFit)"),
-                units="GeV"),
-                #systematics=["tes"]),
+                units="GeV",
+                systematics=["tes"]),
 
             # HH
             Feature("HH_pt", "HH_pt", binning=(10, 50, 150),
@@ -564,7 +617,8 @@ class Config(cmt_config):
             Feature("genWeight", "genWeight", binning=(20, 0, 2),
                 x_title=Label("genWeight")),
             Feature("puWeight", "puWeight", binning=(20, 0, 2),
-                x_title=Label("puWeight")),
+                x_title=Label("puWeight"),
+                systematics=["pu"]),
             Feature("prescaleWeight", "prescaleWeight", binning=(20, 0, 2),
                 x_title=Label("prescaleWeight")),
             Feature("trigSF", "trigSF", binning=(20, 0, 2),
@@ -579,17 +633,7 @@ class Config(cmt_config):
             Feature("genHH_mass", "genHH_mass", binning=(100, 0, 2500),
                 x_title=Label("generator HH mass"),
                 units="GeV"),
-            Feature("genHH_deltaEta", "fabs(genHH_deltaEta)", binning=(100, 0, 10),
-                x_title=Label("generator #Delta#eta(H(#tau#tau), H(bb))")),
 
-            Feature("max_genjj_mass", "max_genjj_mass", binning=(100, 0, 1000),
-                x_title=Label("max. inv. mass (gen. jet, gen. jet)"),
-                units="GeV"),
-            Feature("max_genjj_delta_eta", "max_genjj_delta_eta", binning=(100, 0, 10),
-                x_title=Label("max #Delta#eta(gen. jet, gen. jet)")),
-
-            Feature("genjet_eta", "GenJet_eta", binning=(30, -7.5, 7.5),
-                x_title=Label("Generated jet #eta")),
         ]
         return ObjectCollection(features)
 
@@ -600,13 +644,25 @@ class Config(cmt_config):
         # weights.total_events_weights = ["genWeight", "puWeight", "DYstitchWeight"]
         weights.total_events_weights = ["genWeight", "puWeight"]
 
-        weights.mutau = ["genWeight", "puWeight", "prescaleWeight", "trigSF",
-            "L1PreFiringWeight", "PUjetID_SF"]
+        # weights.mutau = ["genWeight", "puWeight", "prescaleWeight", "trigSF",
+            # "L1PreFiringWeight", "PUjetID_SF", "0.9890"]
+        weights.mutau = ["genWeight", "puWeight", "0.9890"]
+        # weights.etau = ["genWeight", "puWeight", "prescaleWeight", "trigSF",
+            # "L1PreFiringWeight", "PUjetID_SF", "0.9831"]
+        weights.etau = ["genWeight", "puWeight", "0.9831"]
+        # weights.tautau = ["genWeight", "puWeight", "prescaleWeight", "trigSF",
+            # "L1PreFiringWeight", "PUjetID_SF", "1.0038"]
+        weights.tautau = ["genWeight", "puWeight", "1.0038"]
 
-        weights.etau = weights.mutau
-        weights.tautau = weights.mutau
-        weights.base = weights.mutau
-
+        weights.base= ["(((pairType == {0}) * {1}) + ((pairType != {0}) * 1))".format(
+            ic, " * ".join(weights[c.name]))
+            for ic, c in enumerate(self.channels)]
+        weights.baseline = weights.base
+        weights.base_selection = weights.base
+        weights.resolved_1b = weights.base
+        weights.resolved_2b = weights.base
+        weights.boosted = weights.base
+        weights.vbf = weights.base  
         # weights.channels_mult = {channel: jrs(weights.channels[channel], op="*")
             # for channel in weights.channels}
         return weights
@@ -617,6 +673,7 @@ class Config(cmt_config):
             Systematic("met_smearing", ("MET", "MET_smeared")),
             Systematic("prefiring", "_Nom"),
             Systematic("prefiring_syst", "", up="_Up", down="_Dn"),
+            Systematic("pu", "", up="Up", down="Down"),
             Systematic("tes", "_corr"),
             Systematic("empty", "", up="", down="")
         ]
