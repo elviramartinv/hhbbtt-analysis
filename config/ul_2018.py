@@ -31,4 +31,11 @@ class Config_ul_2018(base_config, cmt_ul_2018):
             # for channel in weights.channels}
         return weights
 
+    def add_default_module_files(self):
+        defaults = {}
+        defaults["PreprocessRDF"] = "modulesrdf"
+        defaults["PreCounter"] = "weights"
+        return defaults
+
+
 config = Config_ul_2018("ul_2018", year=2018, ecm=13, lumi_pb=59741, isUL=True)
