@@ -40,41 +40,41 @@ class Config(cmt_config):
         region_names = ["Signal region", "OS inv. iso", "SS iso", "SS inv. iso"]
         selection["os_iso"] = {
             "mutau": ["isOS == 1",
-                "dau2_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium],
+                "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium],
             "etau": ["isOS == 1",
-                "dau2_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium],
+                "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium],
             "tautau": ["isOS == 1",
-                "dau1_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium,
-                "dau2_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium],
+                "dau1_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium],
         }
         selection["os_inviso"] = {
-            "mutau": ["isOS == 1", "dau2_idDeepTau2017v2p1VSjet >= 1",
-                "dau2_idDeepTau2017v2p1VSjet < %s" % self.deeptau.vsjet.Medium],
-            "etau": ["isOS == 1", "dau2_idDeepTau2017v2p1VSjet >= 1",
-                "dau2_idDeepTau2017v2p1VSjet < %s" % self.deeptau.vsjet.Medium],
+            "mutau": ["isOS == 1", "dau2_idDeepTau2018v2p5VSjet >= 1",
+                "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
+            "etau": ["isOS == 1", "dau2_idDeepTau2018v2p5VSjet >= 1",
+                "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
             "tautau": ["isOS == 1",
-                "dau1_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium,
-                "dau2_idDeepTau2017v2p1VSjet >= 1",
-                "dau2_idDeepTau2017v2p1VSjet < %s" % self.deeptau.vsjet.Medium],
+                "dau1_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_idDeepTau2018v2p5VSjet >= 1",
+                "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
         }
         selection["ss_iso"] = {
             "mutau": ["isOS == 0",
-                "dau2_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium],
+                "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium],
             "etau": ["isOS == 0",
-                "dau2_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium],
+                "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium],
             "tautau": ["isOS == 0",
-                "dau1_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium,
-                "dau2_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium],
+                "dau1_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium],
         }
         selection["ss_inviso"] = {
-            "mutau": ["isOS == 0", "dau2_idDeepTau2017v2p1VSjet >= 1",
-                "dau2_idDeepTau2017v2p1VSjet < %s" % self.deeptau.vsjet.Medium],
-            "etau": ["isOS == 0", "dau2_idDeepTau2017v2p1VSjet >= 1",
-                "dau2_idDeepTau2017v2p1VSjet < %s" % self.deeptau.vsjet.Medium],
+            "mutau": ["isOS == 0", "dau2_idDeepTau2018v2p5VSjet >= 1",
+                "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
+            "etau": ["isOS == 0", "dau2_idDeepTau2018v2p5VSjet >= 1",
+                "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
             "tautau": ["isOS == 0",
-                "dau1_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium,
-                "dau2_idDeepTau2017v2p1VSjet >= 1",
-                "dau2_idDeepTau2017v2p1VSjet < %s" % self.deeptau.vsjet.Medium],
+                "dau1_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_idDeepTau2018v2p5VSjet >= 1",
+                "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
         }
         regions = []
         for channel in self.channels:
@@ -293,6 +293,11 @@ class Config(cmt_config):
                 "ggf_sm",
                 "vbf_sm",
             ],
+            "test_22":[
+                "ggf_sm",
+                "dy",
+                "tt",
+            ],
             "test": [
                 "ggf_sm",
                 "dy",
@@ -369,11 +374,71 @@ class Config(cmt_config):
 
         return ObjectCollection(processes), process_group_names, process_training_names
 
+    
     def add_features(self):
         features = [
             Feature("jet_pt", "Jet_pt", binning=(10, 50, 150),
                 x_title=Label("jet p_{T}"),
                 units="GeV"),
+            
+            # Pile up
+
+            Feature("nPU", "Pileup_nPU", binning=(45, 0, 90),
+                x_title=Label("nPU")),
+
+            Feature("PU_nInt", "Pileup_nTrueInt", binning=(45, 0, 90),
+                x_title=Label("PU nTrueInt")),
+
+            Feature("HHbtag", "Jet_HHbtag", binning=(20, -0.5, 2.5),
+                x_title=Label("Jet HHbtag")),
+            # njet
+
+            Feature("njets", "njets", binning=(20, -0.5, 19.5),
+                x_title=Label("n jets")),
+            
+#            Feature("njets", "Jet_pt[Jet_HHbtag > -999 && Jet_pt > 20].size()",binning=(20, -0.5, 19.5),
+#                x_title=Label("n jets")),   
+            
+            # nbjet
+
+            Feature("nbjets", "nbjets",
+                binning=(20,-0.5,19.5),
+                x_title=Label("n bjets")),
+
+
+#            Feature("nbjets", "Jet_pt[Jet_HHbtag > -999 && Jet_eta < 2.4].size()",
+#                binning=(20, -0.5, 19.5),
+#                x_title=Label("n bjets")),
+
+            # bjet WP features 
+
+            Feature("bjetpt_loose", "Jet_pt[Jet_HHbtag > -999. && Jet_btagDeepFlavB > 0.0490]",
+                binning=(10,20,200),
+                x_title=Label("bjet p_{T} (loose WP)"),
+                units="GeV"),
+
+            Feature("bjetpt_medium", "Jet_pt[Jet_HHbtag > -999. && Jet_btagDeepFlavB > 0.2783]",
+                binning=(10,20,200),
+                x_title=Label("bjet p_{T} (medium WP)"),
+                units="GeV"),
+            
+            Feature("bjetpt_tight", "Jet_pt[Jet_HHbtag > -999. && Jet_btagDeepFlavB > 0.7100]",
+                binning=(10,20,200),
+                x_title=Label("bjet p_{T} (tight WP)"),
+                units="GeV"),
+            
+            Feature("nbjets_loose", "Jet_pt[Jet_HHbtag > -999. && Jet_btagDeepFlavB > 0.0490].size()",
+                binning=(10,-0.5,9.5),
+                x_title=Label("nbjets (loose WP)")),
+            
+            Feature("nbjets_medium", "Jet_pt[Jet_HHbtag > -999. && Jet_btagDeepFlavB > 0.2783].size()",
+                binning=(10,-0.5,9.5),
+                x_title=Label("nbjets (medium WP)")),
+
+            Feature("nbjets_tight", "Jet_pt[Jet_HHbtag > -999. && Jet_btagDeepFlavB > 0.7100].size()",
+                binning=(10,-0.5,9.5),
+                x_title=Label("nbjets (tight WP)")),
+
 
             # bjet features
             Feature("bjet1_pt", "Jet_pt.at(bjet1_JetIdx)", binning=(10, 50, 150),
@@ -460,29 +525,29 @@ class Config(cmt_config):
 
             Feature("lep1_pt", "dau1_pt", binning=(10, 50, 150),
                 x_title=Label("#tau_{1} p_{t}"),
-                units="GeV",
-                systematics=["tes"]),
+                units="GeV"),
+            #    systematics=["tes"]),
             Feature("lep1_eta", "dau1_eta", binning=(20, -5., 5.),
                 x_title=Label("#tau_{1} #eta")),
             Feature("lep1_phi", "dau1_phi", binning=(20, -3.2, 3.2),
                 x_title=Label("#tau_{1} #phi")),
             Feature("lep1_mass", "dau1_mass", binning=(10, 50, 150),
                 x_title=Label("#tau_{1} m"),
-                units="GeV",
-                systematics=["tes"]),
+                units="GeV"),
+            #    systematics=["tes"]),
 
             Feature("lep2_pt", "dau2_pt", binning=(10, 50, 150),
                 x_title=Label("#tau_{2} p_{t}"),
-                units="GeV",
-                systematics=["tes"]),
+                units="GeV"),
+            #    systematics=["tes"]),
             Feature("lep2_eta", "dau2_eta", binning=(20, -5., 5.),
                 x_title=Label("#tau_{2} #eta")),
             Feature("lep2_phi", "dau2_phi", binning=(20, -3.2, 3.2),
                 x_title=Label("#tau_{2} #phi")),
             Feature("lep2_mass", "dau2_mass", binning=(10, 50, 150),
                 x_title=Label("#tau_{2} m"),
-                units="GeV",
-                systematics=["tes"]),
+                units="GeV"),
+            #    systematics=["tes"]),
 
             # MET
             Feature("met_pt", "MET_pt", binning=(10, 50, 150),
@@ -508,14 +573,14 @@ class Config(cmt_config):
             # Htt
             Feature("Htt_pt", "Htt_pt", binning=(10, 50, 150),
                 x_title=Label("H(#tau^{+} #tau^{-}) p_t"),
-                units="GeV",
-                systematics=["tes"]),
+                units="GeV"),
+              #  systematics=["tes"]),
             Feature("Htt_eta", "Htt_eta", binning=(20, -5., 5.),
-                x_title=Label("H(#tau^{+} #tau^{-}) #eta"),
-                systematics=["tes"]),
+                x_title=Label("H(#tau^{+} #tau^{-}) #eta")),
+              #  systematics=["tes"]),
             Feature("Htt_phi", "Htt_phi", binning=(20, -3.2, 3.2),
-                x_title=Label("H(#tau^{+} #tau^{-}) #phi"),
-                systematics=["tes"]),
+                x_title=Label("H(#tau^{+} #tau^{-}) #phi")),
+               # systematics=["tes"]),
             Feature("Htt_mass", "Htt_mass", binning=(30, 0, 300),
                 x_title=Label("H(#tau^{+} #tau^{-}) m"),
                 units="GeV"),
@@ -524,40 +589,40 @@ class Config(cmt_config):
             # Htt (SVFit)
             Feature("Htt_svfit_pt", "Htt_svfit_pt", binning=(10, 50, 150),
                 x_title=Label("H(#tau^{+} #tau^{-}) p_t (SVFit)"),
-                units="GeV",
-                systematics=["tes"]),
+                units="GeV"),
+                #systematics=["tes"]),
             Feature("Htt_svfit_eta", "Htt_svfit_eta", binning=(20, -5., 5.),
-                x_title=Label("H(#tau^{+} #tau^{-}) #eta (SVFit)"),
-                systematics=["tes"]),
+                x_title=Label("H(#tau^{+} #tau^{-}) #eta (SVFit)")),
+                #systematics=["tes"]),
             Feature("Htt_svfit_phi", "Htt_svfit_phi", binning=(20, -3.2, 3.2),
-                x_title=Label("H(#tau^{+} #tau^{-}) #phi (SVFit)"),
-                systematics=["tes"]),
+                x_title=Label("H(#tau^{+} #tau^{-}) #phi (SVFit)")),
+                #systematics=["tes"]),
             Feature("Htt_svfit_mass", "Htt_svfit_mass", binning=(30, 0, 300),
                 x_title=Label("H(#tau^{+} #tau^{-}) m (SVFit)"),
-                units="GeV",
-                systematics=["tes"]),
+                units="GeV"),
+                #systematics=["tes"]),
 
             # HH
             Feature("HH_pt", "HH_pt", binning=(10, 50, 150),
                 x_title=Label("HH p_t"),
-                units="GeV",
-                systematics=["tes"]),
+                units="GeV"),
+                #systematics=["tes"]),
             Feature("HH_eta", "HH_eta", binning=(20, -5., 5.),
-                x_title=Label("HH #eta"),
-                systematics=["tes"]),
+                x_title=Label("HH #eta")),
+                #systematics=["tes"]),
             Feature("HH_phi", "HH_phi", binning=(20, -3.2, 3.2),
-                x_title=Label("HH #phi"),
-                systematics=["tes"]),
+                x_title=Label("HH #phi")),
+                #systematics=["tes"]),
             Feature("HH_mass", "HH_mass", binning=(50, 0, 1000),
                 x_title=Label("HH m"),
-                units="GeV",
-                systematics=["tes"]),
+                units="GeV"),
+                #systematics=["tes"]),
 
             # HH (SVFit)
             Feature("HH_svfit_pt", "HH_svfit_pt", binning=(10, 50, 150),
                 x_title=Label("HH p_t (SVFit)"),
-                units="GeV",
-                systematics=["tes"]),
+                units="GeV"),
+                #systematics=["tes"]),
             Feature("HH_svfit_eta", "HH_svfit_eta", binning=(20, -5., 5.),
                 x_title=Label("HH #eta (SVFit)")),
                 #systematics=["tes"]),
@@ -572,11 +637,11 @@ class Config(cmt_config):
             # HH KinFit
             Feature("HHKinFit_mass", "HHKinFit_mass", binning=(50, 0, 1000),
                 x_title=Label("HH m (Kin. Fit)"),
-                units="GeV",
-                systematics=["tes"]),
+                units="GeV"),
+                #systematics=["tes"]),
             Feature("HHKinFit_chi2", "HHKinFit_chi2", binning=(30, 0, 10),
-                x_title=Label("HH #chi^2 (Kin. Fit)"),
-                systematics=["tes"]),
+                x_title=Label("HH #chi^2 (Kin. Fit)")),
+                #systematics=["tes"]),
 
             # VBFjet features
             Feature("vbfjet1_pt", "Jet_pt.at(VBFjet1_JetIdx)", binning=(10, 50, 150),
