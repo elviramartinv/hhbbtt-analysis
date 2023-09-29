@@ -40,6 +40,13 @@ class Config_ul_2022(base_config):
                 process=self.processes.get("dy"),
                 xs=0.00,
                 tags=["ul", "nanoV10"]),
+            #EGamma EFG2022
+            Dataset("data_etau_e",
+                dataset="/EGamma/Run2022E-ReRecoNanoAODv11-v1/NANOAOD",
+                process=self.processes.get("data_etau"),
+                runPeriod="E",
+                ),
+            
         ]
         return ObjectCollection(datasets)
 
