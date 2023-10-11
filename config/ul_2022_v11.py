@@ -22,11 +22,23 @@ class Config_ul_2022(base_config):
                 process=self.processes.get("vbf_sm"),
                 xs=0.001726,
                 tags=["ul", "nanoV10"]),
-            Dataset("tt",
+            Dataset("tt_dl",
                 dataset="/TTto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/"
                     "Run3Summer22EENanoAODv11-126X_mcRun3_2022_realistic_postEE_v1-v1/NANOAODSIM",
                 process=self.processes.get("tt"),
                 xs=88.29,
+                tags=["ul", "nanoV10"]),
+            Dataset("tt_sl",
+                dataset="/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/"
+                    "Run3Summer22EENanoAODv11-126X_mcRun3_2022_realistic_postEE_v1-v1/NANOAODSIM",
+                process=self.processes.get("tt"),
+                xs=365.34,
+                tags=["ul", "nanoV10"]),
+            Dataset("tt_fh",
+                dataset="/TTto4Q_TuneCP5_13p6TeV_powheg-pythia8/"
+                    "Run3Summer22EENanoAODv11-126X_mcRun3_2022_realistic_postEE_v1-v1/NANOAODSIM",
+                process=self.processes.get("tt"),
+                xs=377.96,
                 tags=["ul", "nanoV10"]),
             Dataset("dy",
                 dataset="/DYJetsToLL_M-50_TuneCP5_13p6TeV-madgraphMLM-pythia8/"
@@ -38,6 +50,13 @@ class Config_ul_2022(base_config):
                 dataset="/DYto2L-2Jets_MLL-50_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/"
                     "Run3Summer22EENanoAODv11-126X_mcRun3_2022_realistic_postEE_v1-v1/NANOAODSIM",
                 process=self.processes.get("dy"),
+                xs=0.00,
+                tags=["ul", "nanoV10"]),
+            #WJets
+            Dataset("w_2jets",
+                dataset="/WtoLNu-2Jets_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/"
+                    "Run3Summer22EENanoAODv11-126X_mcRun3_2022_realistic_postEE_v1-v1/NANOAODSIM",
+                process=self.processes.get("w_2jets"),
                 xs=0.00,
                 tags=["ul", "nanoV10"]),
             #EGamma EFG2022
@@ -115,4 +134,4 @@ class Config_ul_2022(base_config):
 
     
 
-config = Config_ul_2022("ul_2022_v11", year=2022, ecm=13.6, lumi_pb=34298.4, isRun3=True)
+config = Config_ul_2022("ul_2022_v11", year=2022, ecm=13.6, lumi_pb=26337.0, isRun3=True)
