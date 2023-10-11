@@ -53,10 +53,10 @@ class Config_ul_2022(base_config):
                 xs=0.00,
                 tags=["ul", "nanoV10"]),
             #WJets
-            Dataset("w_2jets",
+            Dataset("wjets",
                 dataset="/WtoLNu-2Jets_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/"
                     "Run3Summer22EENanoAODv11-126X_mcRun3_2022_realistic_postEE_v1-v1/NANOAODSIM",
-                process=self.processes.get("w_2jets"),
+                process=self.processes.get("wjets"),
                 xs=0.00,
                 tags=["ul", "nanoV10"]),
             #EGamma EFG2022
