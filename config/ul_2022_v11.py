@@ -25,19 +25,19 @@ class Config_ul_2022(base_config):
             Dataset("tt_dl",
                 dataset="/TTto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/"
                     "Run3Summer22EENanoAODv11-126X_mcRun3_2022_realistic_postEE_v1-v1/NANOAODSIM",
-                process=self.processes.get("tt"),
+                process=self.processes.get("tt_dl"),
                 xs=88.29,
                 tags=["ul", "nanoV10"]),
             Dataset("tt_sl",
                 dataset="/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/"
                     "Run3Summer22EENanoAODv11-126X_mcRun3_2022_realistic_postEE_v1-v1/NANOAODSIM",
-                process=self.processes.get("tt"),
+                process=self.processes.get("tt_sl"),
                 xs=365.34,
                 tags=["ul", "nanoV10"]),
             Dataset("tt_fh",
                 dataset="/TTto4Q_TuneCP5_13p6TeV_powheg-pythia8/"
                     "Run3Summer22EENanoAODv11-126X_mcRun3_2022_realistic_postEE_v1-v1/NANOAODSIM",
-                process=self.processes.get("tt"),
+                process=self.processes.get("tt_fh"),
                 xs=377.96,
                 tags=["ul", "nanoV10"]),
             Dataset("dy",
