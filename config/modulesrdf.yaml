@@ -219,18 +219,14 @@ trigSF:
         isUL: self.dataset.has_tag('ul')
 
 
-PUjetID_SF:
-    name: PUjetID_SFRDF
-    path: Corrections.JME.PUjetID_SF
+HHPUjetID_SF:
+    name: HHPUjetID_SFRDF
+    path: Tools.Tools.HH_SF
     parameters:
         year: self.config.year
         isMC: self.dataset.process.isMC
         isUL: self.dataset.has_tag('ul')
         ispreVFP: self.config.get_aux('ispreVFP', False)
-        lep_pt: "{dau1_pt, dau2_pt}"
-        lep_eta: "{dau1_eta, dau2_eta}"
-        lep_phi: "{dau1_phi, dau2_phi}"
-        lep_mass: "{dau1_mass, dau2_mass}"
 
 3_w2:
     name: prescaleWeightRDF
@@ -273,15 +269,11 @@ idAndIsoSF:
 
 
 btag:
-    name: btag_SFRDF
-    path: Corrections.BTV.btag_SF
+    name: HHbtag_SFRDF
+    path: Tools.Tools.HH_SF
     parameters:
         isMC: self.dataset.process.isMC
         year: self.config.year
         isUL: self.dataset.has_tag('ul')
         uncertainties: ["central", "down_hfstats2"]
-        lep_pt: "{dau1_pt, dau2_pt}"
-        lep_eta: "{dau1_eta, dau2_eta}"
-        lep_phi: "{dau1_phi, dau2_phi}"
-        lep_mass: "{dau1_mass, dau2_mass}"
 
