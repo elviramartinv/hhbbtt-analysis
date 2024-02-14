@@ -1,0 +1,9 @@
+hhjets:
+    name: HHJetsRDF
+    path: Tools.Tools.HHJets
+    parameters:
+        year: self.config.year
+        isMC: self.dataset.process.isMC
+        isUL: self.dataset.has_tag('ul')
+        met_smear_tag: ""
+        filter: True
