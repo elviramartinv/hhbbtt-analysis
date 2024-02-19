@@ -90,6 +90,7 @@ drop Tau_neutralIso
 drop SV.*
 drop nSV
 drop nOtherPV
+drop OtherPV_score
 drop OtherPV_z
 drop SoftActivityJet.*
 drop nSoftActivityJet

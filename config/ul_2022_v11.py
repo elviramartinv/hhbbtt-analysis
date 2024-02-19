@@ -16,6 +16,12 @@ class Config_ul_2022(base_config):
                 process=self.processes.get("ggf_sm"),
                 xs=0.03105,
                 tags=["ul", "nanoV10"]),
+            Dataset("ggf_sm_v12",
+                dataset="/GluGlutoHHto2B2Tau_kl-1p00_kt-1p00_c2-0p00_TuneCP5_13p6TeV_powheg-pythia8/"
+                    "Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v3/NANOAODSIM",
+                process=self.processes.get("ggf_sm"),
+                xs=0.03105,
+                tags=["ul", "nanoV12"]),
             Dataset("vbf_sm",
                 dataset="/VBFHHto2B2Tau_CV-1_C2V-1_C3-1_TuneCP5_13p6TeV_madgraph-pythia8/"
                     "Run3Summer22EENanoAODv10-Poisson60KeepRAW_124X_mcRun3_2022_realistic_postEE_v1-v1/NANOAODSIM",
