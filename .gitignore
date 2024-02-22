@@ -5,3 +5,4 @@ data
 correctionlib*
 docs/build
 __pycache__/
+config/config_2022_v12.py
