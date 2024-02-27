@@ -401,9 +401,9 @@ class Config_2022(base_config):
         weights = DotDict()
         weights.default = "1"
         # weights.total_events_weights = ["genWeight", "puWeight", "DYstitchWeight"]
-        weights.total_events_weights = ["genWeight", "puWeight"]
+        weights.total_events_weights = ["genWeight"]
 
-        weights.mutau = ["genWeight", "puWeight"]
+        weights.mutau = ["genWeight"]
 #        weights.mutau = ["genWeight", "prescaleWeight", "trigSF", 
        #     "idAndIsoAndFakeSF", "L1PreFiringWeight", "PUjetID_SF",
        #     "bTagweightReshape"]
@@ -416,4 +416,4 @@ class Config_2022(base_config):
         return weights
     
 
-config = Config_2022("2022_v12_postEE", year=2022, ecm=13.6, lumi_pb=27007.0, isRun3=True)
+config = Config_2022("2022_v12_postEE", year=2022, ecm=13.6, lumi_pb=27007.0, isRun3=True, ispostEE=True)

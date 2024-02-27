@@ -40,41 +40,41 @@ class Config(cmt_config):
         region_names = ["Signal region", "OS inv. iso", "SS iso", "SS inv. iso"]
         selection["os_iso"] = {
             "mutau": ["isOS == 1",
-                "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium],
+                "dau2_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium],
             "etau": ["isOS == 1",
-                "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium],
+                "dau2_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium],
             "tautau": ["isOS == 1",
-                "dau1_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium,
-                "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium],
+                "dau1_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium],
         }
         selection["os_inviso"] = {
-            "mutau": ["isOS == 1", "dau2_idDeepTau2018v2p5VSjet >= 1",
-                "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
-            "etau": ["isOS == 1", "dau2_idDeepTau2018v2p5VSjet >= 1",
-                "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
+            "mutau": ["isOS == 1", "dau2_idDeepTau2017v2p1VSjet >= 1",
+                "dau2_idDeepTau2017v2p1VSjet < %s" % self.deeptau.vsjet.Medium],
+            "etau": ["isOS == 1", "dau2_idDeepTau2017v2p1VSjet >= 1",
+                "dau2_idDeepTau2017v2p1VSjet < %s" % self.deeptau.vsjet.Medium],
             "tautau": ["isOS == 1",
-                "dau1_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium,
-                "dau2_idDeepTau2018v2p5VSjet >= 1",
-                "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
+                "dau1_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_idDeepTau2017v2p1VSjet >= 1",
+                "dau2_idDeepTau2017v2p1VSjet < %s" % self.deeptau.vsjet.Medium],
         }
         selection["ss_iso"] = {
             "mutau": ["isOS == 0",
-                "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium],
+                "dau2_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium],
             "etau": ["isOS == 0",
-                "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium],
+                "dau2_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium],
             "tautau": ["isOS == 0",
-                "dau1_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium,
-                "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium],
+                "dau1_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium],
         }
         selection["ss_inviso"] = {
-            "mutau": ["isOS == 0", "dau2_idDeepTau2018v2p5VSjet >= 1",
-                "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
-            "etau": ["isOS == 0", "dau2_idDeepTau2018v2p5VSjet >= 1",
-                "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
+            "mutau": ["isOS == 0", "dau2_idDeepTau2017v2p1VSjet >= 1",
+                "dau2_idDeepTau2017v2p1VSjet < %s" % self.deeptau.vsjet.Medium],
+            "etau": ["isOS == 0", "dau2_idDeepTau2017v2p1VSjet >= 1",
+                "dau2_idDeepTau2017v2p1VSjet < %s" % self.deeptau.vsjet.Medium],
             "tautau": ["isOS == 0",
-                "dau1_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium,
-                "dau2_idDeepTau2018v2p5VSjet >= 1",
-                "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
+                "dau1_idDeepTau2017v2p1VSjet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_idDeepTau2017v2p1VSjet >= 1",
+                "dau2_idDeepTau2017v2p1VSjet < %s" % self.deeptau.vsjet.Medium],
         }
         regions = []
         for channel in self.channels:

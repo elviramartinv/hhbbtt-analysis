@@ -5,7 +5,7 @@ lumifilter:
         isMC: self.dataset.process.isMC
         year: self.config.year
 
-#puweight:
+# puweight:
 #    name: puWeightRDF
 #    path: Corrections.LUM.puWeight
 #    parameters:
@@ -14,13 +14,15 @@ lumifilter:
 #        isUL: self.dataset.has_tag('ul')
 
 # # UL only
-# # puweightCor:
-    # # name: puWeightRDF
-    # # path: Corrections.LUM.puWeightCor
-    # # parameters:
-        # # isMC: self.dataset.process.isMC
-        # # year: self.config.year
-        # # isUL: self.dataset.has_tag('ul')
+# puweightCor:
+#     name: puWeightRDF
+#     path: Corrections.LUM.puWeightCor
+#     parameters:
+#         isMC: self.dataset.process.isMC
+#         year: self.config.year
+#         isRun3: self.config.get_aux("isRun3", False)
+#         ispostEE: self.config.get_aux('ispostEE', False)
+#         isUL: self.dataset.has_tag('ul')
 
 2:
     name: MetFilterRDF
@@ -246,7 +248,7 @@ hhvar:
 #        isUL: self.dataset.has_tag('ul')
 
 
-#PUjetID_SF:
+# PUjetID_SF:
 #    name: PUjetID_SFRDF
 #    path: Corrections.JME.PUjetID_SF
 #    parameters:
@@ -254,6 +256,7 @@ hhvar:
 #        isMC: self.dataset.process.isMC
 #        isUL: self.dataset.has_tag('ul')
 #        ispreVFP: self.config.get_aux('ispreVFP', False)
+#        ispostEE: self.config.get_aux('ispostEE', False)
 #        lep_pt: "{dau1_pt, dau2_pt}"
 #        lep_eta: "{dau1_eta, dau2_eta}"
 #        lep_phi: "{dau1_phi, dau2_phi}"
@@ -275,13 +278,15 @@ hhvar:
 #        isUL: self.dataset.has_tag('ul')
 #
 
-#muSF:
+# muSF:
 #    name: muSFRDF
 #    path: Corrections.MUO.muCorrections
 #    parameters:
 #        isMC: self.dataset.process.isMC
 #        year: self.config.year
 #        isUL: self.dataset.has_tag('ul')
+#        isRun3: self.config.get_aux('isRun3', False)
+#        ispostEE: self.config.get_aux('ispostEE', False) 
 
 #eleSD:
 #    name: eleSFRDF
@@ -299,13 +304,15 @@ hhvar:
 #        isMC: self.dataset.process.isMC
 
 
-#btag:
+# btag:
 #    name: btag_SFRDF
 #    path: Corrections.BTV.btag_SF
 #    parameters:
 #        isMC: self.dataset.process.isMC
 #        year: self.config.year
 #        isUL: self.dataset.has_tag('ul')
+#        ispostEE: self.config.get_aux('ispostEE', False)
+#        isRun3: self.config.get_aux('isRun3', False)
 #        uncertainties: ["central", "down_hfstats2"]
 #        lep_pt: "{dau1_pt, dau2_pt}"
 #        lep_eta: "{dau1_eta, dau2_eta}"
