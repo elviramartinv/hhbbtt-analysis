@@ -37,7 +37,7 @@ class Config(base_config):
     #     return ObjectCollection(processes + processes_v9), process_group_names, process_training_names
         
     def add_datasets(self):
-        skim_directory = "/eos/user/l/lportale/hhbbtautau/skims/SKIMS_UL18/"
+        skim_directory = "/eos/user/l/lportale/hhbbtautau/skims/SKIMS_UL18"
         datasets = [
             Dataset("ggf_s0_m250",
                 folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m250"),
