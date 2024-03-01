@@ -585,6 +585,7 @@ class Config(cmt_config):
     def add_weights(self):
         weights = DotDict()
         weights.default = "1"
+        weights.total_events_weights = ["totalWeight"]
 
         # The last number is the needed scaling to correct the bTagweightReshape weights
         # each channel has its own, and this should be propagated correctly to each category.

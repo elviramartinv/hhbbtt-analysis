@@ -72,5 +72,5 @@ class Config(base_config):
                 tags=["ul"]),
         ]
         return ObjectCollection(datasets)
-
+    
 config = Config("qcd_llr_2018", year=2018, ecm=13, lumi_pb=59741)

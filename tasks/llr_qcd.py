@@ -26,6 +26,7 @@ class FeaturePlotQCDTest(ConfigTaskWithCategory, DatasetWrapperTask):
         "normal wp, default=True")
     feature_names = law.CSVParameter(default=(), description="names of features to plot, uses all "
         "features when empty, default: ()")
+    region_name = law.Parameter(default="", description="name of the region to plot, default: ''")
 
     allow_composite_category = True
 
