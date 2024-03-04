@@ -5,13 +5,17 @@ lumifilter:
         isMC: self.dataset.process.isMC
         year: self.config.year
 
-# puweight:
-#    name: puWeightRDF
-#    path: Corrections.LUM.puWeight
-#    parameters:
-#        isMC: self.dataset.process.isMC
-#        year: self.config.year
-#        isUL: self.dataset.has_tag('ul')
+puweight:
+   name: puWeightRDF
+   path: Corrections.LUM.puWeight
+   parameters:
+       isMC: self.dataset.process.isMC
+       year: self.config.year
+       runPeriod: self.dataset.runPeriod
+       auto: True
+       file: self.get_path(self.get_input())[0]
+       
+    
 
 # # UL only
 # puweightCor:
@@ -31,48 +35,52 @@ lumifilter:
         isMC: self.dataset.process.isMC
         year: self.config.year
 
-
-#tauSF:
-#    name: tauSFRDF
-#    path: Corrections.TAU.tauCorrections
-#    parameters:
-#        isMC: self.dataset.process.isMC
-#        year: self.config.year
-#        isUL: self.dataset.has_tag('ul')
+tauSF:
+    name: tauSFRDF
+    path: Corrections.TAU.tauCorrections
+    parameters:
+        isMC: self.dataset.process.isMC
+        year: self.config.year
+        runPeriod: self.dataset.runPeriod
+        vsjet_wps: ["Medium", "Tight"]
+        vse_wps: ["VVLoose", "Tight"]
+        vsmu_wps: ["VLoose", "Tight"]
+        vsjet_vse_wp: "VVLoose"
 
 hhlepton:
     name: HHLeptonRDF
     path: Tools.Tools.HHLepton
     parameters:
         isMC: self.dataset.process.isMC
-        isRun3: self.config.get_aux("isRun3", False)
         isV10: self.dataset.has_tag("nanoV10")
         year: self.config.year
+        runEra: self.dataset.runEra
         runPeriod: self.dataset.runPeriod
         vvvl_vsjet: self.config.deeptau.vsjet.VVVLoose
         vl_vse: self.config.deeptau.vse.VLoose
         vvl_vse: self.config.deeptau.vse.VVLoose
         t_vsmu: self.config.deeptau.vsmu.Tight
         vl_vsmu: self.config.deeptau.vsmu.VLoose
-        filter: True
+        pairType_filter: True
         tau_syst: ""
         tau_central: ""
 
-ditaujet:
-    name: HHDiTauJetRDF
-    path: Tools.Tools.HHLepton
-    parameters:
-        isMC: self.dataset.process.isMC
-        jet_syst: ""
-        tau_syst: ""
+# ditaujet:
+#     name: HHDiTauJetRDF
+#     path: Tools.Tools.HHLepton
+#     parameters:
+#         isMC: self.dataset.process.isMC
+#         jet_syst: ""
+#         tau_syst: ""
 
-hhleptonVar:
-    name: HHLeptonVarRDF
-    path: Tools.Tools.HHLepton
-    parameters:
-        isMC: self.dataset.process.isMC
-        tau_syst: ""
-        tau_central: ""
+# hhleptonVar:
+#     name: HHLeptonVarRDF
+#     path: Tools.Tools.HHLepton
+#     parameters:
+#         isMC: self.dataset.process.isMC
+#         year = self.config.year
+#         tau_syst: ""
+#         tau_central: ""
        
 
 # hhleptonVarTESup:
@@ -133,6 +141,7 @@ hhjets:
         year: self.config.year
         isMC: self.dataset.process.isMC
         isUL: self.dataset.has_tag('ul')
+        HHbtag_v: 2
         met_smear_tag: ""
         filter: True
         tau_syst: ""
@@ -278,23 +287,34 @@ hhvar:
 #        isUL: self.dataset.has_tag('ul')
 #
 
-# muSF:
-#    name: muSFRDF
-#    path: Corrections.MUO.muCorrections
-#    parameters:
-#        isMC: self.dataset.process.isMC
-#        year: self.config.year
-#        isUL: self.dataset.has_tag('ul')
-#        isRun3: self.config.get_aux('isRun3', False)
-#        ispostEE: self.config.get_aux('ispostEE', False) 
+muSF:
+   name: muSFRDF
+   path: Corrections.MUO.muCorrections
+   parameters:
+       isMC: self.dataset.process.isMC
+       year: self.config.year
+       runPeriod: self.dataset.runPeriod
+       isUL: self.dataset.has_tag('ul')
+       wps: [tight_id, tight_iso]
 
-#eleSD:
-#    name: eleSFRDF
-#    path: Corrections.EGM.eleCorrections
-#    parameters:
-#        isMC: self.dataset.process.isMC
-#        year: self.config.year
-#        isUL: self.dataset.has_tag('ul')
+eleSF:
+   name: eleSFRDF
+   path: Corrections.EGM.eleCorrections
+   parameters:
+       isMC: self.dataset.process.isMC
+       year: self.config.year
+       runPeriod: self.dataset.runPeriod
+       isUL: self.dataset.has_tag('ul')
+       wps: ["wp80iso"]
+
+eleSS:
+    name: eleSSRDF
+    path: Corrections.EGM.eleCorrections
+    parameters:
+        isMC: self.dataset.process.isMC
+        year: self.config.year
+        runPeriod: self.dataset.runPeriod
+        wps: ["wp80iso"]
 
 
 #idAndIsoSF:
@@ -304,18 +324,12 @@ hhvar:
 #        isMC: self.dataset.process.isMC
 
 
-# btag:
-#    name: btag_SFRDF
-#    path: Corrections.BTV.btag_SF
-#    parameters:
-#        isMC: self.dataset.process.isMC
-#        year: self.config.year
-#        isUL: self.dataset.has_tag('ul')
-#        ispostEE: self.config.get_aux('ispostEE', False)
-#        isRun3: self.config.get_aux('isRun3', False)
-#        uncertainties: ["central", "down_hfstats2"]
-#        lep_pt: "{dau1_pt, dau2_pt}"
-#        lep_eta: "{dau1_eta, dau2_eta}"
-#        lep_phi: "{dau1_phi, dau2_phi}"
-#        lep_mass: "{dau1_mass, dau2_mass}"
+btag:
+    name: btagSFRDF
+    path: Corrections.BTV.btagCorrections
+    parameters:
+        isMC: self.dataset.process.isMC
+        year: self.config.year
+        runPeriod: self.dataset.runPeriod
+        wps: ['shape', 'M']
 
