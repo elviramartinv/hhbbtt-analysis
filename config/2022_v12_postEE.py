@@ -39,6 +39,7 @@ class Config_2022(base_config):
                     "Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v3/NANOAODSIM",
                 process=self.processes.get("ggf_sm"),
                 xs=0.03105,
+                runPeriod="postEE",
                 tags=["nanoV12"]),
             # VBF signal
             Dataset("vbf_sm",
@@ -59,6 +60,7 @@ class Config_2022(base_config):
                 dataset="/DYto2L-2Jets_MLL-50_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/"
                     "Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM",
                 process=self.processes.get("dy"),
+                runPeriod="postEE",
                 xs=6077.22,
                 # merging={
                 #     "tautau":20,
@@ -167,6 +169,7 @@ class Config_2022(base_config):
                 dataset="/TTto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/"
                     "Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM",
                 process=self.processes.get("tt_dl"),
+                runPeriod="postEE",
                 xs=88.29,
                 # merging={
                 #     "tautau": 20,
@@ -189,6 +192,7 @@ class Config_2022(base_config):
                 dataset="/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/"
                     "Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM",
                 process=self.processes.get("tt_sl"),
+                runPeriod="postEE",
                 xs=365.34,
                 # merging={
                 #     "tautau": 20,
@@ -200,6 +204,7 @@ class Config_2022(base_config):
                 dataset="/TTto4Q_TuneCP5_13p6TeV_powheg-pythia8/"
                     "Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM",
                 process=self.processes.get("tt_fh"),
+                runPeriod="postEE",
                 xs=377.96,
                 # scaling=(0.96639, 0.00863),
                 tags=["nanoV12"]),
@@ -401,7 +406,7 @@ class Config_2022(base_config):
         weights = DotDict()
         weights.default = "1"
         # weights.total_events_weights = ["genWeight", "puWeight", "DYstitchWeight"]
-        weights.total_events_weights = ["genWeight"]
+        weights.total_events_weights = ["genWeight",  "puWeight"]
 
         weights.mutau = ["genWeight"]
 #        weights.mutau = ["genWeight", "prescaleWeight", "trigSF", 
@@ -416,4 +421,4 @@ class Config_2022(base_config):
         return weights
     
 
-config = Config_2022("2022_v12_postEE", year=2022, ecm=13.6, lumi_pb=27007.0, isRun3=True, ispostEE=True)
+config = Config_2022("2022_v12_postEE", year=2022, ecm=13.6, lumi_pb=27007.0)
