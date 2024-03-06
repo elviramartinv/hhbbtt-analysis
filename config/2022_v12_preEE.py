@@ -11,6 +11,7 @@ class Config_2022(base_config):
     def __init__(self, *args, **kwargs):
         super(Config_2022, self).__init__(*args, **kwargs)
         self.btag=DotDict(tight=0.7183, medium=0.3086, loose=0.0583) # DeepJet WP From https://btv-wiki.docs.cern.ch/ScaleFactors/Run3Summer22/
+        # self.btag=DotDict(tight=0.6734, medium=0.245, loose=0.047) # PNet WP From https://btv-wiki.docs.cern.ch/ScaleFactors/Run3Summer22/
         self.deeptau=DotDict(
             vsjet=DotDict(VVVLoose=1, VVLoose=2, VLoose=3, Loose=4, Medium=5,
                           Tight=6, VTight=7, VVTight=8),
@@ -22,37 +23,38 @@ class Config_2022(base_config):
     def add_processes(self):
         processes, process_group_names, process_training_names = super(Config_2022, self).add_processes()
         processes_22 = [
-            Process("ggf_0_1_0", Label("HH_{ggf}"), color=(0, 0, 0), isSignal=True,
+            Process("ggf_0_1_0", Label("HH_{ggf}^{(0,1,0)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="ggf"),
-            Process("ggf_0_1_1", Label("HH_{ggf}"), color=(0, 0, 0), isSignal=True,
+            Process("ggf_0_1_1", Label("HH_{ggf}^{(0,1,1)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="ggf"),
-            Process("ggf_1_1_0p10", Label("HH_{ggf}"), color=(0, 0, 0), isSignal=True,
+            Process("ggf_1_1_0p10", Label("HH_{ggf}^{(1,1,0.1)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="ggf"),
-            Process("ggf_1_1_0p35", Label("HH_{ggf}"), color=(0, 0, 0), isSignal=True,
+            Process("ggf_1_1_0p35", Label("HH_{ggf}^{(1,1,0.35)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="ggf"),
-            Process("ggf_1_1_3", Label("HH_{ggf}"), color=(0, 0, 0), isSignal=True,
+            Process("ggf_1_1_3", Label("HH_{ggf}^{(1,1,3)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="ggf"),
-            Process("ggf_1_1_m2", Label("HH_{ggf}"), color=(0, 0, 0), isSignal=True,
+            Process("ggf_1_1_m2", Label("HH_{ggf}^{(1,1,2)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="ggf"),
-            Process("ggf_2p45_1_0", Label("HH_{ggf}"), color=(0, 0, 0), isSignal=True,
+            Process("ggf_2p45_1_0", Label("HH_{ggf}^{(2.45,1,0)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="ggf"),
-            Process("ggf_5_1_0", Label("HH_{ggf}"), color=(0, 0, 0), isSignal=True,
+            Process("ggf_5_1_0", Label("HH_{ggf}^{(5,1,0)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="ggf"),
-            Process("vbf_1p74_1p37_14p4", Label("HH_{VBF}"), color=(0, 0, 0), isSignal=True,
+
+            Process("vbf_1p74_1p37_14p4", Label("HH_{VBF}^{(1.74,1.37,14.4)"), color=(0, 0, 0), isSignal=True,
                 parent_process="vbf"),
-            Process("vbf_m0p012_0p030_10p2", Label("HH_{VBF}"), color=(0, 0, 0), isSignal=True,
+            Process("vbf_m0p012_0p030_10p2", Label("HH_{VBF}^{(0.012,0.03,10.2)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="vbf"),
-            Process("vbf_m0p758_1p44_m19p3", Label("HH_{VBF}"), color=(0, 0, 0), isSignal=True,
+            Process("vbf_m0p758_1p44_m19p3", Label("HH_{VBF}^{(0.758,1.44,19.3)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="vbf"),
-            Process("vbf_m0p962_0p959_m1p43", Label("HH_{VBF}"), color=(0, 0, 0), isSignal=True,
+            Process("vbf_m0p962_0p959_m1p43", Label("HH_{VBF}^{(0.962,0.959,1.43)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="vbf"),
-            Process("vbf_m1p21_1p94_m0p94", Label("HH_{VBF}"), color=(0, 0, 0), isSignal=True,
+            Process("vbf_m1p21_1p94_m0p94", Label("HH_{VBF}^{(1.21,1.94,0.94)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="vbf"),
-            Process("vbf_m1p60_2p72_m1p36", Label("HH_{VBF}"), color=(0, 0, 0), isSignal=True,
+            Process("vbf_m1p60_2p72_m1p36", Label("HH_{VBF}^{(1.6,2.72,1.36)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="vbf"),
-            Process("vbf_m1p38_3p57_m3p39", Label("HH_{VBF}"), color=(0, 0, 0), isSignal=True,
+            Process("vbf_m1p38_3p57_m3p39", Label("HH_{VBF}^{(1.38,3.57,3.39)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="vbf"),
-            Process("vbf_m2p12_3p87_m5p96", Label("HH_{VBF}"), color=(0, 0, 0), isSignal=True,
+            Process("vbf_m2p12_3p87_m5p96", Label("HH_{VBF}^{(2.12,3.87,5.96)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="vbf")
             ]
         processes.extend(processes_22)  

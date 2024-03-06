@@ -11,6 +11,7 @@ class Config_2022(base_config):
     def __init__(self, *args, **kwargs):
         super(Config_2022, self).__init__(*args, **kwargs)
         self.btag=DotDict(tight=0.73, medium=0.3196, loose=0.0614) # DeepJet WP From https://btv-wiki.docs.cern.ch/ScaleFactors/Run3Summer22EE/
+        # self.btag=DotDict(tight=0.6915, medium=0.2605, loose=0.0499) # PNet WP From https://btv-wiki.docs.cern.ch/ScaleFactors/Run3Summer22EE/
         self.deeptau=DotDict(
             vsjet=DotDict(VVVLoose=1, VVLoose=2, VLoose=3, Loose=4, Medium=5,
                           Tight=6, VTight=7, VVTight=8),
@@ -56,6 +57,63 @@ class Config_2022(base_config):
                 xs=0.027080,
                 runPeriod="postEE",
                 tags=["nanoV12"]),
+            # Dataset("vbf_1p74_1p37_14p4",
+            #     dataset="/VBFHHto2B2Tau_CV-1p74_C2V-1p37_C3-14p4_TuneCP5_13p6TeV_madgraph-pythia8/"
+            #         "Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM",
+            #     process=self.processes.get("vbf_1p74_1p37_14p4"),
+            #     xs=1.0,
+            #     runPeriod="postEE",
+            #     tags=["nanoV12"]),
+            # Dataset("vbf_m0p012_0p030_10p2",
+            #     dataset="/VBFHHto2B2Tau_CV-0p012_C2V-0p030_C3-10p2_TuneCP5_13p6TeV_madgraph-pythia8/"
+            #         "Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM",
+            #     process=self.processes.get("vbf_m0p012_0p030_10p2"),
+            #     xs=1.0,
+            #     runPeriod="postEE",
+            #     tags=["nanoV12"]),
+            # Dataset("vbf_m0p758_1p44_m19p3",
+            #     dataset="/VBFHHto2B2Tau_CV-0p758_C2V-1p44_C3-19p3_TuneCP5_13p6TeV_madgraph-pythia8/"
+            #         "Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM",
+            #     process=self.processes.get("vbf_m0p758_1p44_m19p3"),
+            #     xs=1.0,
+            #     runPeriod="postEE",
+            #     tags=["nanoV12"]),
+            # Dataset("vbf_m0p962_0p959_m1p43",
+            #     dataset="/VBFHHto2B2Tau_CV-0p962_C2V-0p959_C3-1p43_TuneCP5_13p6TeV_madgraph-pythia8/"
+            #         "Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM",
+            #     process=self.processes.get("vbf_m0p962_0p959_m1p43"),
+            #     xs=1.0,
+            #     runPeriod="postEE",
+            #     tags=["nanoV12"]),
+            # Dataset("vbf_m1p21_1p94_m0p94",
+            #     dataset="/VBFHHto2B2Tau_CV-1p21_C2V-1p94_C3-0p94_TuneCP5_13p6TeV_madgraph-pythia8/"
+            #         "Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM",
+            #     process=self.processes.get("vbf_m1p21_1p94_m0p94"),
+            #     xs=1.0,
+            #     runPeriod="postEE",
+            #     tags=["nanoV12"]),
+            # Dataset("vbf_m1p60_2p72_m1p36",
+            #     dataset="/VBFHHto2B2Tau_CV-1p60_C2V-2p72_C3-1p36_TuneCP5_13p6TeV_madgraph-pythia8/"
+            #         "Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM",
+            #     process=self.processes.get("vbf_m1p60_2p72_m1p36"),
+            #     xs=1.0,
+            #     runPeriod="postEE",
+            #     tags=["nanoV12"]),
+            # Dataset("vbf_m1p38_3p57_m3p39",
+            #     dataset="/VBFHHto2B2Tau_CV-1p38_C2V-3p57_C3-3p39_TuneCP5_13p6TeV_madgraph-pythia8/"
+            #         "Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM",
+            #     process=self.processes.get("vbf_m1p38_3p57_m3p39"),
+            #     xs=1.0,
+            #     runPeriod="postEE",
+            #     tags=["nanoV12"]),
+            # Dataset("vbf_m2p12_3p87_m5p96",
+            #     dataset="/VBFHHto2B2Tau_CV-2p12_C2V-3p87_C3-5p96_TuneCP5_13p6TeV_madgraph-pythia8/"
+            #         "Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM",
+            #     process=self.processes.get("vbf_m2p12_3p87_m5p96"),
+            #     xs=1.0,
+            #     runPeriod="postEE",
+            #     tags=["nanoV12"]),
+                   
             # Background samples
             # dy
             Dataset("dy",
@@ -431,10 +489,11 @@ class Config_2022(base_config):
                 process=self.processes.get("data_mutau"),
                 runPeriod="postEE",
                 runEra="G")
+        
         ]
-    
         return ObjectCollection(datasets)
-    
+        
+
     def add_weights(self):
         weights = DotDict()
         weights.default = "1"
