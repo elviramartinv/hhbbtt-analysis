@@ -19,7 +19,8 @@ class Config_2022(base_config):
                 Tight=6, VTight=7, VVTight=8),
             vsmu=DotDict(VLoose=1, Loose=1, Medium=3, Tight=4),
         )
-
+        self.regions = self.add_regions()
+        
     def add_processes(self):
         processes, process_group_names, process_training_names = super(Config_2022, self).add_processes()
 
