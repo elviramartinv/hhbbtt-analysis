@@ -4,13 +4,14 @@ from analysis_tools.utils import join_root_selection as jrs
 from plotting_tools import Label
 from collections import OrderedDict
 import os
+import re
 
 from config.llr_2018 import Config as base_config
 
 class Config(base_config):
     def __init__(self, *args, **kwargs):
         super(Config, self).__init__(*args, **kwargs)
-        self.btag=DotDict(tight=0.73, medium=0.3196, loose=0.0614) # DeepJet WP From https://btv-wiki.docs.cern.ch/ScaleFactors/Run3Summer22EE/
+        self.btag=DotDict(tight=0.7264, medium=0.2783, loose=0.0490) # DeepJet WP From KLUB framework
         # self.btag=DotDict(tight=0.6915, medium=0.2605, loose=0.0499) # PNet WP From https://btv-wiki.docs.cern.ch/ScaleFactors/Run3Summer22EE/
         self.deeptau=DotDict(
             vsjet=DotDict(VVVLoose=1, VVLoose=2, VLoose=3, Loose=4, Medium=5,
@@ -20,6 +21,54 @@ class Config(base_config):
             vsmu=DotDict(VLoose=1, Loose=1, Medium=3, Tight=4),
         )
         self.regions = self.add_regions()
+        self.categories = self.add_categories(btag="bjet{}_bID_deepFlavor")
+        # self.skipped_files_must_be_in_dataset = False # This and the tree name must be changed at analysis_tools/dataset.py
+
+
+    def add_categories(self, **kwargs):
+        categories = super(Config, self).add_categories(**kwargs)
+        sel = DotDict()
+        btag = kwargs.pop("btag", "bjet{}_bID_deepFlavor")
+        df = lambda i, op, wp: "{} {} {}".format(btag.format(i), op, self.btag[wp])
+        sel["btag"] = DotDict(
+            m_first=[df(1, ">", "medium")],
+            m_second=[df(2, ">", "medium")],
+            m_any=[jrs(df(1, ">", "medium"), df(2, ">", "medium"), op="or")],
+            l=[df(1, ">", "loose"), df(2, "<", "loose")],
+            ll=[df(1, ">", "loose"), df(2, ">", "loose")],
+            m=[jrs(jrs(df(1, ">", "medium"), df(2, "<", "medium"), op="and"),
+                jrs(df(1, "<", "medium"), df(2, ">", "medium"), op="and"), op="or")],
+            mm=[df(1, ">", "medium"), df(2, ">", "medium")],
+            not_mm=[df(1, "<", "medium"), df(2, "<", "medium")],
+        )
+
+        baseline = ["pairType >= 0 && pairType <= 2 && nbjetscand > 1 && nleps == 0"]
+        
+        massCut = ["{{Hbb_mass}} > 50 && {{Hbb_mass}} < 270 && {{Htt_mass}} > 20 && {{Htt_mass}} < 130"]
+        massCutInv = ["{{Hbb_mass}} < 50 || {{Hbb_mass}} > 270 || {{Htt_mass}} < 20 || {{Htt_mass}} > 130"]
+        
+        sel["resolved_1b_llr"] = DotDict({
+            ch: (sel.btag.m + massCut + ["isBoosted != 1"]
+                + baseline)
+            for ch in self.channels.names()
+        })
+        sel["resolved_1b_llr_combined"] = self.join_selection_channels(sel["resolved_1b_llr"])
+        sel["resolved_2b_llr"] = DotDict({
+            ch: (sel.btag.mm + massCut + ["isBoosted != 1"])
+            # + baseline)
+            for ch in self.channels.names()
+        })
+        sel["resolved_2b_llr_combined"] = self.join_selection_channels(sel["resolved_2b_llr"])
+        
+
+        # categories.get("baseline").selection = "pairType >= 0 && pairType <= 2 && nbjetscand > 1 && nleps == 0"
+        # categories.get("baseline_boosted").selection = "pairType >= 0 && pairType <= 2 && nleps == 0 && isBoosted == 1"
+        categories.get("resolved_1b").selection = sel["resolved_1b_llr_combined"]
+        categories.get("resolved_2b").selection = sel["resolved_2b_llr_combined"]
+        return categories
+
+
+
     #     self.processes, self.process_group_names, self.process_training_names = self.add_processes()
 
     # def add_processes(self):
@@ -87,319 +136,385 @@ class Config(base_config):
         
     def add_datasets(self):
         skim_directory = "/eos/user/l/lportale/hhbbtautau/skims/SKIMS_UL18"
+
+        skimdatasets = {
+            "dy":"DY_Incl",
+            "ST_tW_top":"ST_tW_top",
+            "ST_tW_antitop":"ST_tW_antitop",
+            "WJets_HT0To70": "WJets_HT0To70", 
+            "WJets_HT70To100": "WJets_HT70To100", 
+            "WJets_HT100To200": "WJets_HT100To200", 
+            "WJets_HT200To400": "WJets_HT200To400",
+            "WJets_HT400To600": "WJets_HT400To600", 
+            "WJets_HT600To800": "WJets_HT600To800", 
+            "WJets_HT800To1200": "WJets_HT800To1200", 
+            "WJets_HT1200To2500": "WJets_HT1200To2500", 
+            "WJets_HT2500ToInf": "WJets_HT2500ToInf",
+            "EWKWMinus2Jets_WToLNu": "EWKWMinus2Jets_WToLNu",
+            "EWKWPlus2Jets_WToLNu": "EWKWPlus2Jets_WToLNu",
+            "EWKZ2Jets_ZToLL": "EWKZ2Jets_ZToLL",
+            "ST_t-channel_top": "ST_t-channel_top",
+            "ST_t-channel_antitop": "ST_t-channel_antitop",
+            "WW": "WW",
+            "WZ": "WZ",
+            "ZZ": "ZZ",
+            "TTZZ": "TTZZ",
+            "TTWW": "TTWW",
+            "TTWZ": "TTWZ",
+            "TTWH": "TTWH",
+            "TTZH": "TTZH",
+            "TTWJetsToLNu": "TTWJetsToLNu",
+            "TTWJetsToQQ": "TTWJetsToQQ",
+            "TTZToLLNuNu": "TTZToLLNuNu",
+            "TTZToQQ": "TTZToQQ",
+            "GluGluHToTauTau": "GluGluHToTauTau",
+            "VBFHToTauTau": "VBFHToTauTau",
+            "WWW": "WWW",
+            "WZZ": "WZZ",
+            "ZZZ": "ZZZ",
+            "WWZ": "WWZ",
+            "WminusHToTauTau": "WminusHToTauTau",
+            "WplusHToTauTau": "WplusHToTauTau",
+            "ZH_HToBB_ZToLL": "ZH_HToBB_ZToLL",
+            "ZH_HToBB_ZToQQ": "ZH_HToBB_ZToQQ",
+            "ZHToTauTau":"ZHToTauTau",
+
+
+        }
+        skipFiles_dict = {}
+
+        for dataset_name, dataset in skimdatasets.items():
+            folder = os.path.join(skim_directory, dataset)
+            goodfiles = os.path.join(folder, "goodfiles.txt")
+
+            if os.path.exists(goodfiles):
+                with open(goodfiles, "r") as f:
+                    goodfiles = f.read().splitlines()
+                goodfiles = [re.search('output_(.*).root', file).group(1) for file in goodfiles]
+                allfiles = [re.search('output_(.*).root', file).group(1) for file in os.listdir(folder) if file.endswith('.root')]
+
+                skipFiles = [os.path.join(folder, f"output_{file}.root") for file in allfiles if file not in goodfiles]
+            else:
+                skipFiles = []
+
+            skipFiles_dict[dataset_name] = skipFiles   
+
+        # print("SKIPFILES dict", skipFiles_dict)
+                
         datasets = [
-            Dataset("ggf_s0_m250",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m250"),
+            Dataset("rad250",
+                folder=os.path.join(skim_directory, "Rad250"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m260",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m260"),
+            Dataset("rad260",
+                folder=os.path.join(skim_directory, "Rad260"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m270",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m270"),
+            Dataset("rad270",
+                folder=os.path.join(skim_directory, "Rad270"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m280",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m280"),
+            Dataset("rad280",
+                folder=os.path.join(skim_directory, "Rad280"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m300",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m300"),
+            Dataset("rad300",
+                folder=os.path.join(skim_directory, "Rad300"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m320",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m320"),
+            Dataset("rad320",
+                folder=os.path.join(skim_directory, "Rad320"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m350",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m350"),
+            Dataset("rad350",
+                folder=os.path.join(skim_directory, "Rad350"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m400",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m400"),
+            Dataset("rad400",
+                folder=os.path.join(skim_directory, "Rad400"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m450",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m450"),
+            Dataset("rad450",
+                folder=os.path.join(skim_directory, "Rad450"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m500",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m500"),
+            Dataset("rad500",
+                folder=os.path.join(skim_directory, "Rad500"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m550",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m550"),
+            Dataset("rad550",
+                folder=os.path.join(skim_directory, "Rad550"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m600",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m600"),
+            Dataset("rad600",
+                folder=os.path.join(skim_directory, "Rad600"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m650",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m650"),
+            Dataset("rad650",
+                folder=os.path.join(skim_directory, "Rad650"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m700",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m700"),
+            Dataset("rad700",
+                folder=os.path.join(skim_directory, "Rad700"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m750",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m750"),
+            Dataset("rad750",
+                folder=os.path.join(skim_directory, "Rad750"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m800",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m800"),
+            Dataset("rad800",
+                folder=os.path.join(skim_directory, "Rad800"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m850",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m850"),
+            Dataset("rad850",
+                folder=os.path.join(skim_directory, "Rad850"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m900",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m900"),
+            Dataset("rad900",
+                folder=os.path.join(skim_directory, "Rad900"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m1000",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m1000"),
+            Dataset("rad1000",
+                folder=os.path.join(skim_directory, "Rad1000"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m1250",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m1250"),
+            Dataset("rad1250",
+                folder=os.path.join(skim_directory, "Rad1250"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m1500",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m1500"),
+            Dataset("rad1500",
+                folder=os.path.join(skim_directory, "Rad1500"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m1750",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m1750"),
+            Dataset("rad1750",
+                folder=os.path.join(skim_directory, "Rad1750"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m2000",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m2000"),
+            Dataset("rad2000",
+                folder=os.path.join(skim_directory, "Rad2000"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m2500",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m2500"),
+            Dataset("rad2500",
+                folder=os.path.join(skim_directory, "Rad2500"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s0_m3000",
-                folder=os.path.join(skim_directory, "SKIM_ggF_Radion_m3000"),
+            Dataset("rad3000",
+                folder=os.path.join(skim_directory, "Rad3000"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m250",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m250"),
+            Dataset("grav250",
+                folder=os.path.join(skim_directory, "Grav250"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m260",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m260"),
+            Dataset("grav260",
+                folder=os.path.join(skim_directory, "Grav260"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m270",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m270"),
+            Dataset("grav270",
+                folder=os.path.join(skim_directory, "Grav270"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m280",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m280"),
+            Dataset("grav280",
+                folder=os.path.join(skim_directory, "Grav280"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m300",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m300"),
+            Dataset("grav300",
+                folder=os.path.join(skim_directory, "Grav300"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m320",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m320"),
+            Dataset("grav320",
+                folder=os.path.join(skim_directory, "Grav320"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m350",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m350"),
+            Dataset("grav350",
+                folder=os.path.join(skim_directory, "Grav350"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m400",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m400"),
+            Dataset("grav400",
+                folder=os.path.join(skim_directory, "Grav400"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.), 
-            Dataset("ggf_s2_m450",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m450"),
+            Dataset("grav450",
+                folder=os.path.join(skim_directory, "Grav450"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m500",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m500"),
+            Dataset("grav500",
+                folder=os.path.join(skim_directory, "Grav500"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m550",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m550"),
+            Dataset("grav550",
+                folder=os.path.join(skim_directory, "Grav550"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m600",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m600"),
+            Dataset("grav600",
+                folder=os.path.join(skim_directory, "Grav600"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m650",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m650"),
+            Dataset("grav650",
+                folder=os.path.join(skim_directory, "Grav650"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m700",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m700"),
+            Dataset("grav700",
+                folder=os.path.join(skim_directory, "Grav700"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m750",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m750"),
+            Dataset("grav750",
+                folder=os.path.join(skim_directory, "Grav750"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m800",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m800"),
+            Dataset("grav800",
+                folder=os.path.join(skim_directory, "Grav800"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m850",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m850"),
+            Dataset("grav850",
+                folder=os.path.join(skim_directory, "Grav850"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m900",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m900"),
+            Dataset("grav900",
+                folder=os.path.join(skim_directory, "Grav900"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m1000",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m1000"),
+            Dataset("grav1000",
+                folder=os.path.join(skim_directory, "Grav1000"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m1250",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m1250"),
+            Dataset("grav1250",
+                folder=os.path.join(skim_directory, "Grav1250"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m1500",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m1500"),
+            Dataset("grav1500",
+                folder=os.path.join(skim_directory, "Grav1500"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m1750",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m1750"),
+            Dataset("grav1750",
+                folder=os.path.join(skim_directory, "Grav1750"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m2000",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m2000"),
+            Dataset("grav2000",
+                folder=os.path.join(skim_directory, "Grav2000"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m2500",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m2500"),
+            Dataset("grav2500",
+                folder=os.path.join(skim_directory, "Grav2500"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("ggf_s2_m3000",
-                folder=os.path.join(skim_directory, "SKIM_ggF_BulkGraviton_m3000"),
+            Dataset("grav3000",
+                folder=os.path.join(skim_directory, "Grav3000"),
                 process=self.processes.get("ggf"),
                 file_pattern="output_.*root",
                 xs=1.),
             Dataset("tt_dl",
-                folder=os.path.join(skim_directory, "TTTo2L2Nu"),
+                folder=os.path.join(skim_directory, "TT_FullyLep"),
                 process=self.processes.get("tt_dl"),
                 file_pattern="output_.*root",
                 xs=1.),             
             Dataset("tt_sl",
-                folder=os.path.join(skim_directory, "TTToSemiLeptonic"),
+                folder=os.path.join(skim_directory, "TT_SemiLep"),
                 process=self.processes.get("tt_sl"),
                 file_pattern="output_.*root",
                 xs=1.),
             Dataset("tt_fh",
-                folder=os.path.join(skim_directory, "TTToHadronic"),
+                folder=os.path.join(skim_directory, "TT_Hadronic"),
                 process=self.processes.get("tt_fh"),
                 file_pattern="output_.*root",
                 xs=1.),
-            Dataset("dy_m-50",
-                folder=os.path.join(skim_directory, "DYJetsToLL_M-50_TuneCP5_13TeV-amc"),
+            Dataset("dy",
+                folder=os.path.join(skim_directory, "DY_Incl"),
                 process=self.processes.get("dy_m-50"),
                 file_pattern="output_.*root",
+                skipFiles=skipFiles_dict["dy"],
                 xs=1.),
             Dataset("dy_0j",
-                folder=os.path.join(skim_directory, "DYJetsToLL_0J"),
+                folder=os.path.join(skim_directory, "DY_0J"),
                 process=self.processes.get("dy_0j"),
                 file_pattern="output_.*root",
                 xs=1.),
             Dataset("dy_1j",
-                folder=os.path.join(skim_directory, "DYJetsToLL_1J"),
+                folder=os.path.join(skim_directory, "DY_1J"),
                 process=self.processes.get("dy_1j"),
                 file_pattern="output_.*root",
                 xs=1.),
             Dataset("dy_2j",
-                folder=os.path.join(skim_directory, "DYJetsToLL_2J"),
+                folder=os.path.join(skim_directory, "DY_2J"),
                 process=self.processes.get("dy_2j"),
                 file_pattern="output_.*root",
                 xs=1.),
             Dataset("dy_PtZ_0To50",
-                folder=os.path.join(skim_directory, "DYJetsToLL_LHEFilterPtZ-0To50"),
+                folder=os.path.join(skim_directory, "DY_PtZ0To50"),
                 process=self.processes.get("dy_PtZ_0To50"),
                 file_pattern="output_.*root",
                 xs=1.),
             Dataset("dy_PtZ_50To100",
-                folder=os.path.join(skim_directory, "DYJetsToLL_LHEFilterPtZ-50To100"),
+                folder=os.path.join(skim_directory, "DY_PtZ50To100"),
                 process=self.processes.get("dy_PtZ_50To100"),
                 file_pattern="output_.*root",
                 xs=1.),
             Dataset("dy_PtZ_100To250",
-                folder=os.path.join(skim_directory, "DYJetsToLL_LHEFilterPtZ-100To250"),
+                folder=os.path.join(skim_directory, "DY_PtZ100To250"),
                 process=self.processes.get("dy_PtZ_100To250"),
                 file_pattern="output_.*root",
                 xs=1.),
             Dataset("dy_PtZ_250To400",
-                folder=os.path.join(skim_directory, "DYJetsToLL_LHEFilterPtZ-250To400"),
+                folder=os.path.join(skim_directory, "DY_PtZ250To400"),
                 process=self.processes.get("dy_PtZ_250To400"),
                 file_pattern="output_.*root",
                 xs=1.),
             Dataset("dy_PtZ_400To650",
-                folder=os.path.join(skim_directory, "DYJetsToLL_LHEFilterPtZ-400To650"),
+                folder=os.path.join(skim_directory, "DY_PtZ400To650"),
                 process=self.processes.get("dy_PtZ_400To650"),
                 file_pattern="output_.*root",
                 xs=1.),
             Dataset("dy_PtZ_650ToInf",
-                folder=os.path.join(skim_directory, "DYJetsToLL_LHEFilterPtZ-650ToInf"),
+                folder=os.path.join(skim_directory, "DY_PtZ650ToInf"),
                 process=self.processes.get("dy_PtZ_650ToInf"),
                 file_pattern="output_.*root",
                 xs=1.),
@@ -420,7 +535,7 @@ class Config(base_config):
                 xs=1.),
             #### DATA
             Dataset("data_mutau",
-                folder=[os.path.join(skim_directory, "SingleMuon__Run2018%s" % era)
+                folder=[os.path.join(skim_directory, "Muon%s" % era)
                     for era in ["A", "B", "C", "D"]],
                 selection="pairType == 0",
                 process=self.processes.get("data_mutau"),
@@ -431,18 +546,18 @@ class Config(base_config):
                 xs=1.),
             Dataset("data_etau",
                 # folder=os.path.join(skim_directory, "SKIM_SingleMuon_Run2018A"),
-                folder=[os.path.join(skim_directory, "EGamma__Run2018%s" % era)
+                folder=[os.path.join(skim_directory, "EGamma%s" % era)
                     for era in ["A", "B", "C", "D"]],
                 selection="pairType == 1",
                 process=self.processes.get("data_etau"),
                 file_pattern="output_.*root",
-                merging={
-                    "etau": 1,
-                },
+                # merging={
+                #     "etau": 1,
+                # },
                 xs=1.),
-            Dataset("data_tautau",
+            Dataset("data_tau",
                 # folder=os.path.join(skim_directory, "SKIM_SingleMuon_Run2018A"),
-                folder=[os.path.join(skim_directory, "Tau__Run2018%s" % era)
+                folder=[os.path.join(skim_directory, "Tau%s" % era)
                     for era in ["A", "B", "C", "D"]],
                 selection="pairType == 2",
                 process=self.processes.get("data_tau"),
@@ -461,17 +576,17 @@ class Config(base_config):
         ]
         other_backgrounds = {
             "wjets": [
-                "WJetsToLNu_TuneCP5_13TeV-madgraph", "WJetsToLNu_HT-70To100", "WJetsToLNu_HT-100To200", "WJetsToLNu_HT-200To400", 
-                "WJetsToLNu_HT-400To600", "WJetsToLNu_HT-600To800", "WJetsToLNu_HT-800To1200", "WJetsToLNu_HT-1200To2500", "WJetsToLNu_HT-2500ToInf",
+                "WJets_HT0To70", "WJets_HT70To100", "WJets_HT100To200", "WJets_HT200To400", 
+                "WJets_HT400To600", "WJets_HT600To800", "WJets_HT800To1200", "WJets_HT1200To2500", "WJets_HT2500ToInf",
             ],
             "ewk": [
                 "EWKWMinus2Jets_WToLNu", "EWKWPlus2Jets_WToLNu", "EWKZ2Jets_ZToLL",
             ],
             "singlet": [
-                "ST_tchannel_antitop", "ST_tchannel_top",
+                "ST_t-channel_antitop", "ST_t-channel_top",
             ],
             "tw": [
-                "ST_tW_antitop_5f_inclusive", "ST_tW_top_5f_inclusive",
+                "ST_tW_antitop", "ST_tW_top",
             ],
             "zh": [
                 "ZH_HToBB_ZToLL", "ZHToTauTau", "ZH_HToBB_ZToQQ"
@@ -480,9 +595,9 @@ class Config(base_config):
                 "WminusHToTauTau", "WplusHToTauTau",
             ],
             "vv": [
-                "_WW_TuneCP5",  
-                "_WZ_TuneCP5",  
-                "_ZZ_TuneCP5",  
+                "WW",  
+                "WZ",  
+                "ZZ",  
             ],
             "ttx": [
                 "TTZZ", "TTWW", "TTWZ", "TTWH", "TTZH", "TTWJetsToLNu", "TTWJetsToQQ", "TTZToLLNuNu", "TTZToQQ"
@@ -494,7 +609,7 @@ class Config(base_config):
                 "VBFHToTauTau",
             ],
             "vvv": [
-                "49_WWW", "50_WWW", "53_WZZ", "54_WZZ", "55_ZZZ", "56_ZZZ", "51_WWZ", "52_WWZ",
+                "WWW", "WZZ", "ZZZ", "WWZ",
             ]
         }
 
@@ -505,6 +620,7 @@ class Config(base_config):
                         folder=os.path.join(skim_directory, "%s" % name),
                         process=self.processes.get(process),
                         file_pattern="output_.*root",
+                        skipFiles=skipFiles_dict[name],
                         xs=1.),  # already normalised to xs
                 )
                 # print("process", self.processes.get(process))
@@ -513,21 +629,25 @@ class Config(base_config):
     def add_weights(self):
         weights = DotDict()
         weights.default = "1"
-        weights.total_events_weights = ["totalWeights"]
+        # weights.total_events_weights = ["totalWeight"]
         # weights.total_events_weights = ["MC_weight", "PUReweight", "PUjetID_SF", "L1pref_weight", "prescaleWeight",
-            # "trigSF", "bTagweightReshape"]
-        weights.mutau = ["totalWeights"]
+        #     "trigSF", "bTagweightReshape"]
+        weights.total_events_weights = ["MC_weight", "PUReweight"]
+        # weights.total_events_weights = ["MC_weight", "PUReweight", "L1pref_weight", "trigSF", "IdFakeSF_deep_2d", "PUjetID_SF", "bTagweightReshape"]
+        # weights.mutau = ["totalWeight"]
         # weights.mutau = ["MC_weight", "PUReweight", "PUjetID_SF", "L1pref_weight", "prescaleWeight",
         #     "trigSF", "bTagweightReshape", "0.9890"]
-        weights.etau = ["MC_weight", "PUReweight", "PUjetID_SF", "L1pref_weight", "prescaleWeight",
-            "trigSF", "bTagweightReshape", "0.9831"]
-        weights.tautau = ["MC_weight", "PUReweight", "PUjetID_SF", "L1pref_weight",
-            # "prescaleWeight", "trigSF", "IdAndIsoAndFakeSF_deep_pt", "DYscale_MTT", "customTauIdSF",
-            "prescaleWeight", "trigSF", "bTagweightReshape", "1.0038"]
-        weights.base= ["(((pairType == {0}) * {1}) + ((pairType != {0}) * 1))".format(
-            ic, " * ".join(weights[c.name]))
-            for ic, c in enumerate(self.channels)]
-        weights.baseline = weights.base
+        # weights.etau = ["MC_weight", "PUReweight", "PUjetID_SF", "L1pref_weight", "prescaleWeight",
+        #     "trigSF", "bTagweightReshape", "0.9831"]
+        # weights.tautau = ["MC_weight", "PUReweight", "PUjetID_SF", "L1pref_weight",
+        #     # "prescaleWeight", "trigSF", "IdAndIsoAndFakeSF_deep_pt", "DYscale_MTT", "customTauIdSF",
+        #     "prescaleWeight", "trigSF", "bTagweightReshape", "1.0038"]
+        # weights.base= ["(((pairType == {0}) * {1}) + ((pairType != {0}) * 1))".format(
+        #     ic, " * ".join(weights[c.name]))
+        #     for ic, c in enumerate(self.channels)]
+        # weights.baseline = weights.base
+        weights.base = ["MC_weight", "PUReweight"]
+        # weights.base = ["MC_weight", "PUReweight", "L1pref_weight", "trigSF", "IdFakeSF_deep_2d", "PUjetID_SF", "bTagweightReshape"]
         weights.base_selection = weights.base
         weights.resolved_1b = weights.base
         weights.resolved_2b = weights.base
