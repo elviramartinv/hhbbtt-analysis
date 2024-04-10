@@ -54,17 +54,24 @@ class Config(base_config):
         })
         sel["resolved_1b_llr_combined"] = self.join_selection_channels(sel["resolved_1b_llr"])
         sel["resolved_2b_llr"] = DotDict({
-            ch: (sel.btag.mm + massCut + ["isBoosted != 1"])
-            # + baseline)
+            ch: (sel.btag.mm + massCut + ["isBoosted != 1"]
+            + baseline)
             for ch in self.channels.names()
         })
         sel["resolved_2b_llr_combined"] = self.join_selection_channels(sel["resolved_2b_llr"])
         
+        sel["resolved_1b_llr_inv"] = DotDict({
+            ch: (sel.btag.m + massCutInv + ["isBoosted != 1"]
+                + baseline)
+            for ch in self.channels.names()
+        })
+        sel["resolved_1b_llr_combined_inv"] = self.join_selection_channels(sel["resolved_1b_llr_inv"])
 
         # categories.get("baseline").selection = "pairType >= 0 && pairType <= 2 && nbjetscand > 1 && nleps == 0"
         # categories.get("baseline_boosted").selection = "pairType >= 0 && pairType <= 2 && nleps == 0 && isBoosted == 1"
         categories.get("resolved_1b").selection = sel["resolved_1b_llr_combined"]
         categories.get("resolved_2b").selection = sel["resolved_2b_llr_combined"]
+        categories.get("resolved_1b_inv").selection = sel["resolved_1b_llr_combined_inv"]
         return categories
 
 
@@ -139,6 +146,24 @@ class Config(base_config):
 
         skimdatasets = {
             "dy":"DY_Incl",
+            "dy_0j":"DY_0J",
+            "dy_1j":"DY_1J",
+            "dy_2j":"DY_2J",
+            "dy_PtZ_0To50":"DY_PtZ0To50",
+            "dy_PtZ_50To100":"DY_PtZ50To100",
+            "dy_PtZ_100To250":"DY_PtZ100To250",
+            "dy_PtZ_250To400":"DY_PtZ250To400",
+            "dy_PtZ_400To650":"DY_PtZ400To650",
+            "dy_PtZ_650ToInf":"DY_PtZ650ToInf",
+            "tt_dl":"TT_FullyLep",
+            "tt_sl":"TT_SemiLep",
+            "tt_fh":"TT_Hadronic",
+            "tth_bb":"ttHTobb",
+            "tth_nonbb":"ttHToNonbb",
+            "tth_tautau":"ttHToTauTau",
+            "data_mutau":"MuonA",
+            "data_etau":"EGammaA",
+            "data_tau":"TauA",
             "ST_tW_top":"ST_tW_top",
             "ST_tW_antitop":"ST_tW_antitop",
             "WJets_HT0To70": "WJets_HT0To70", 
@@ -506,6 +531,7 @@ class Config(base_config):
             Dataset("dy_PtZ_250To400",
                 folder=os.path.join(skim_directory, "DY_PtZ250To400"),
                 process=self.processes.get("dy_PtZ_250To400"),
+                skipFiles=skipFiles_dict["dy_PtZ_250To400"],
                 file_pattern="output_.*root",
                 xs=1.),
             Dataset("dy_PtZ_400To650",
@@ -562,9 +588,9 @@ class Config(base_config):
                 selection="pairType == 2",
                 process=self.processes.get("data_tau"),
                 file_pattern="output_.*root",
-                merging={
-                    "mutau": 20,
-                },
+                # merging={
+                #     "mutau": 20,
+                # },
                 xs=1.),
             # Dataset("data_MET",
             #     folder=[os.path.join(skim_directory, "MET_Run2018%s" % era)
@@ -632,8 +658,7 @@ class Config(base_config):
         # weights.total_events_weights = ["totalWeight"]
         # weights.total_events_weights = ["MC_weight", "PUReweight", "PUjetID_SF", "L1pref_weight", "prescaleWeight",
         #     "trigSF", "bTagweightReshape"]
-        weights.total_events_weights = ["MC_weight", "PUReweight"]
-        # weights.total_events_weights = ["MC_weight", "PUReweight", "L1pref_weight", "trigSF", "IdFakeSF_deep_2d", "PUjetID_SF", "bTagweightReshape"]
+        weights.total_events_weights = ["MC_weight", "PUReweight", "L1pref_weight", "trigSF", "IdFakeSF_deep_2d", "PUjetID_SF", "bTagweightReshape"]
         # weights.mutau = ["totalWeight"]
         # weights.mutau = ["MC_weight", "PUReweight", "PUjetID_SF", "L1pref_weight", "prescaleWeight",
         #     "trigSF", "bTagweightReshape", "0.9890"]
@@ -646,11 +671,11 @@ class Config(base_config):
         #     ic, " * ".join(weights[c.name]))
         #     for ic, c in enumerate(self.channels)]
         # weights.baseline = weights.base
-        weights.base = ["MC_weight", "PUReweight"]
-        # weights.base = ["MC_weight", "PUReweight", "L1pref_weight", "trigSF", "IdFakeSF_deep_2d", "PUjetID_SF", "bTagweightReshape"]
+        weights.base = ["MC_weight", "PUReweight", "L1pref_weight", "trigSF", "IdFakeSF_deep_2d", "PUjetID_SF", "bTagweightReshape"]
         weights.base_selection = weights.base
         weights.resolved_1b = weights.base
         weights.resolved_2b = weights.base
+        weights.resolved_1b_inv = weights.base
         weights.boosted = weights.base
         weights.vbf = weights.base 
         return weights
