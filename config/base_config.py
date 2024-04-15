@@ -12,6 +12,7 @@ class Config(cmt_config):
     def __init__(self, *args, **kwargs):
         # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
         self.btag=DotDict(tight=0.7264, medium=0.2770, loose=0.0494)
+        self.pnet=DotDict(tight=0.988, medium=0.9734, loose=0.9172)
         self.deeptau=DotDict(
             vsjet=DotDict(VVVLoose=1, VVLoose=3, VLoose=7, Loose=15, Medium=31,
                 Tight=63, VTight=127, VVTight=255),
@@ -138,8 +139,8 @@ class Config(cmt_config):
         mass_boost_sel = ["(({{Htt_svfit_mass}} - 128.) * ({{Htt_svfit_mass}} - 128.) / (60. * 60.)"
             " + ({{Hbb_mass}} - 159.) * ({{Hbb_mass}} - 159.) / (94. * 94.)) < 1"]
         sel["resolved_1b"] = DotDict({
-            ch: (sel.btag.m + mass_ellipse_sel + ["isBoosted != 1"]
-                + _excl_non_vbf_loose)
+            ch: (sel.btag.m + mass_ellipse_sel + ["isBoosted != 1"])
+                # + _excl_non_vbf_loose)
             for ch in self.channels.names()
         })
         sel["resolved_1b_combined"] = self.join_selection_channels(sel["resolved_1b"])
@@ -172,6 +173,7 @@ class Config(cmt_config):
         categories = [
             Category("base", "base category", selection="event >= 0"),
             Category("baseline", "Baseline", selection="pairType >= 0 && pairType <= 2"),
+            Category("baseline_boosted", "Baseline boosted", selection="pairType >= 0 && pairType <= 2 && isBoosted == 1"),            
             Category("base_selection", "base category",
                 nt_selection="(Sum$(Tau_pt->fElements > 17) > 0"
                     " && ((Sum$(Muon_pt->fElements > 17) > 0"
@@ -195,10 +197,16 @@ class Config(cmt_config):
                 skip_processes=["data_etau", "data_mutau"]),
             Category("resolved_1b", label="Resolved 1b category",
                 selection=sel["resolved_1b_combined"]),
+            Category("resolved_1b_inv", label="Resolved 1b category (inverted)",
+                selection=sel["resolved_1b_combined"]), #### only for llr
             Category("resolved_2b", label="Resolved 2b category",
                 selection=sel["resolved_2b_combined"]),
             Category("boosted", label="Boosted category",
                 selection=sel["boosted_combined"]),
+            Category("boosted_l", label="Boosted category (loose)",
+                selection=sel["boosted_combined"]), #### only for llr
+            Category("boosted_m", label="Boosted category (medium)",
+                selection=sel["boosted_combined"]), #### only for llr
             Category("vbf_loose", label="VBF (loose) category",
                 selection=sel["vbf_loose_combined"]),
             Category("vbf_tight", label="VBF (tight) category",
@@ -238,6 +246,15 @@ class Config(cmt_config):
             Process("dy", Label("DY"), color=(255, 102, 102), isDY=True, llr_name="DY"),
             Process("dy_high", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
             Process("dy_low", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
+            Process("dy_0j", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
+            Process("dy_1j", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
+            Process("dy_2j", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
+            Process("dy_PtZ_0To50", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
+            Process("dy_PtZ_50To100", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
+            Process("dy_PtZ_100To250", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
+            Process("dy_PtZ_250To400", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
+            Process("dy_PtZ_400To650", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
+            Process("dy_PtZ_650ToInf", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
 
             Process("tt", Label("t#bar{t}"), color=(255, 153, 0), llr_name="TT"),
             Process("tt_dl", Label("t#bar{t} DL"), color=(205, 0, 9), parent_process="tt"),
@@ -246,7 +263,7 @@ class Config(cmt_config):
 
             Process("others", Label("Others"), color=(134, 136, 138)),
 
-            Process("tth", Label("t#bar{t}H"), color=(255, 153, 0), parent_process="others",
+            Process("tth", Label("t#bar{t}H"), color=(255, 153, 0), 
                 llr_name="ttH"),
             Process("tth_bb", Label("t#bar{t}H"), color=(255, 153, 0), parent_process="tth"),
             Process("tth_tautau", Label("t#bar{t}H"), color=(255, 153, 0), parent_process="tth"),
@@ -276,9 +293,6 @@ class Config(cmt_config):
         process_group_names = {
             "default": [
                 # "ggf_sm",
-                # "data_tau",
-                # "dy_high",
-                # "tt_dl",
                 "data",
                 "dy",
                 "tt",
@@ -363,6 +377,35 @@ class Config(cmt_config):
                 "ggf_0_1",
                 "ggf_2p45_1",
                 "ggf_5_1",
+            ],
+            "plots_no_signal" : [
+                "tt",
+                "dy",
+                "tth",
+                "others",
+                "data",
+            ],
+            "plots" : [
+                "tt"
+                "tth"
+                "dy"
+                "WJetsToLNu_TuneCP5_13TeV-madgraph",
+                "WJetsToLNu_HT-70To100",
+                "WJetsToLNu_HT-100To200",
+                "WJetsToLNu_HT-200To400",
+                "WJetsToLNu_HT-400To600",
+                "WJetsToLNu_HT-600To800",
+                "WJetsToLNu_HT-800To1200",
+                "WJetsToLNu_HT-1200To2500",
+                "WJetsToLNu_HT-2500ToInf",
+                "EWKWPlus2Jets_WToLNu",
+                "EWKWMinus2Jets_WToLNu",
+                "ST_tW_antitop_5f_inclusive",
+                "ST_tW_top_5f_inclusive",
+                "ST_t-channel_top",
+                "ST_t-channel_antitop",
+                "data"
+
             ]
         }
 

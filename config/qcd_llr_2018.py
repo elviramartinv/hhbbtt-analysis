@@ -11,8 +11,8 @@ from config.llr_2018 import Config as base_config
 class Config(base_config):
     def __init__(self, *args, **kwargs):
         super(Config, self).__init__(*args, **kwargs)
-        self.btag=DotDict(tight=0.7264, medium=0.2783, loose=0.0490) # DeepJet WP From KLUB framework
-        # self.btag=DotDict(tight=0.6915, medium=0.2605, loose=0.0499) # PNet WP From https://btv-wiki.docs.cern.ch/ScaleFactors/Run3Summer22EE/
+        self.btag=DotDict(tight=0.7264, medium=0.2783, loose=0.0490) # DeepJet WP from KLUB framework https://github.com/LLRCMS/KLUBAnalysis/blob/master/config/selectionCfg_MuTau_UL18.cfg 
+        self.pnet=DotDict(tight=0.988, medium=0.9734, loose=0.9172) # PNet WP from KLUB framework
         self.deeptau=DotDict(
             vsjet=DotDict(VVVLoose=1, VVLoose=2, VLoose=3, Loose=4, Medium=5,
                           Tight=6, VTight=7, VVTight=8),
@@ -29,7 +29,9 @@ class Config(base_config):
         categories = super(Config, self).add_categories(**kwargs)
         sel = DotDict()
         btag = kwargs.pop("btag", "bjet{}_bID_deepFlavor")
+        pnet = kwargs.pop("pnet", "fatjet_particleNetMDJetTags_score")
         df = lambda i, op, wp: "{} {} {}".format(btag.format(i), op, self.btag[wp])
+        df_pnet = lambda op, wp: "{} {} {}".format(pnet, op, self.pnet[wp])
         sel["btag"] = DotDict(
             m_first=[df(1, ">", "medium")],
             m_second=[df(2, ">", "medium")],
@@ -41,8 +43,13 @@ class Config(base_config):
             mm=[df(1, ">", "medium"), df(2, ">", "medium")],
             not_mm=[df(1, "<", "medium"), df(2, "<", "medium")],
         )
+        sel["pnet"] = DotDict(
+            l=[df_pnet(">", "loose")],
+            m=[df_pnet(">", "medium")],
+        )
 
         baseline = ["pairType >= 0 && pairType <= 2 && nbjetscand > 1 && nleps == 0"]
+        baseline_boosted = ["pairType >= 0 && pairType <= 2 && nleps == 0 && isBoosted == 1"]
         
         massCut = ["{{Hbb_mass}} > 50 && {{Hbb_mass}} < 270 && {{Htt_mass}} > 20 && {{Htt_mass}} < 130"]
         massCutInv = ["{{Hbb_mass}} < 50 || {{Hbb_mass}} > 270 || {{Htt_mass}} < 20 || {{Htt_mass}} > 130"]
@@ -67,11 +74,24 @@ class Config(base_config):
         })
         sel["resolved_1b_llr_combined_inv"] = self.join_selection_channels(sel["resolved_1b_llr_inv"])
 
-        # categories.get("baseline").selection = "pairType >= 0 && pairType <= 2 && nbjetscand > 1 && nleps == 0"
-        # categories.get("baseline_boosted").selection = "pairType >= 0 && pairType <= 2 && nleps == 0 && isBoosted == 1"
+        sel["boosted_l_llr"] = DotDict({
+            ch: (sel.pnet.l + baseline_boosted)
+            for ch in self.channels.names()
+        })
+        sel["boosted_l_llr_combined"] = self.join_selection_channels(sel["boosted_l_llr"])
+        sel["boosted_m_llr"] = DotDict({
+            ch: (sel.pnet.m + baseline_boosted)
+            for ch in self.channels.names()
+        })
+        sel["boosted_m_llr_combined"] = self.join_selection_channels(sel["boosted_m_llr"])
+
+        categories.get("baseline").selection = "pairType >= 0 && pairType <= 2 && nbjetscand > 1 && nleps == 0"
+        categories.get("baseline_boosted").selection = "pairType >= 0 && pairType <= 2 && nleps == 0 && isBoosted == 1"
         categories.get("resolved_1b").selection = sel["resolved_1b_llr_combined"]
         categories.get("resolved_2b").selection = sel["resolved_2b_llr_combined"]
         categories.get("resolved_1b_inv").selection = sel["resolved_1b_llr_combined_inv"]
+        categories.get("boosted_l").selection = sel["boosted_l_llr_combined"]
+        categories.get("boosted_m").selection = sel["boosted_m_llr_combined"]
         return categories
 
 
@@ -81,17 +101,7 @@ class Config(base_config):
     # def add_processes(self):
     #     processes, process_group_names, process_training_names = super(Config, self).add_processes()
     #     processes_qcd = [
-    #         Process("dy_m-50", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
-    #         Process("dy_0j", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
-    #         Process("dy_1j", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
-    #         Process("dy_2j", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
-    #         Process("dy_PtZ_0To50", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
-    #         Process("dy_PtZ_50To100", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
-    #         Process("dy_PtZ_100To250", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
-    #         Process("dy_PtZ_250To400", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
-    #         Process("dy_PtZ_400To650", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
-    #         Process("dy_PtZ_650ToInf", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
-
+    #         Process("dy", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
     #     ]
     #     for process in processes_qcd:
     #         processes.add(process)
@@ -161,9 +171,9 @@ class Config(base_config):
             "tth_bb":"ttHTobb",
             "tth_nonbb":"ttHToNonbb",
             "tth_tautau":"ttHToTauTau",
-            "data_mutau":"MuonA",
-            "data_etau":"EGammaA",
-            "data_tau":"TauA",
+            "data_mutau": "Muon",
+            "data_etau":"EGamma",
+            "data_tau":"Tau",
             "ST_tW_top":"ST_tW_top",
             "ST_tW_antitop":"ST_tW_antitop",
             "WJets_HT0To70": "WJets_HT0To70", 
@@ -209,18 +219,34 @@ class Config(base_config):
         skipFiles_dict = {}
 
         for dataset_name, dataset in skimdatasets.items():
-            folder = os.path.join(skim_directory, dataset)
-            goodfiles = os.path.join(folder, "goodfiles.txt")
+            skipFiles = []
+            if dataset_name in ["data_etau", "data_mutau", "data_tau"]:
+                
+                for era in ["A", "B", "C", "D"]:
+                    folder = os.path.join(skim_directory, dataset + era)
+                    goodfiles = os.path.join(folder, "goodfiles.txt")
 
-            if os.path.exists(goodfiles):
-                with open(goodfiles, "r") as f:
-                    goodfiles = f.read().splitlines()
-                goodfiles = [re.search('output_(.*).root', file).group(1) for file in goodfiles]
-                allfiles = [re.search('output_(.*).root', file).group(1) for file in os.listdir(folder) if file.endswith('.root')]
+                    if os.path.exists(goodfiles):
+                        with open(goodfiles, "r") as f:
+                            goodfiles = f.read().splitlines()
+                        goodfiles = [re.search('output_(.*).root', file).group(1) for file in goodfiles]
+                        allfiles = [re.search('output_(.*).root', file).group(1) for file in os.listdir(folder) if file.endswith('.root')]
 
-                skipFiles = [os.path.join(folder, f"output_{file}.root") for file in allfiles if file not in goodfiles]
+                        skipFiles += [os.path.join(folder, f"output_{file}.root") for file in allfiles if file not in goodfiles]
             else:
-                skipFiles = []
+                folder = os.path.join(skim_directory, dataset)
+                goodfiles = os.path.join(folder, "goodfiles.txt")
+
+                if os.path.exists(goodfiles):
+                    with open(goodfiles, "r") as f:
+                        goodfiles = f.read().splitlines()
+                    goodfiles = [re.search('output_(.*).root', file).group(1) for file in goodfiles]
+                    allfiles = [re.search('output_(.*).root', file).group(1) for file in os.listdir(folder) if file.endswith('.root')]
+
+                    skipFiles = [os.path.join(folder, f"output_{file}.root") for file in allfiles if file not in goodfiles]
+            
+                else:
+                    skipFiles = []
 
             skipFiles_dict[dataset_name] = skipFiles   
 
@@ -494,7 +520,7 @@ class Config(base_config):
                 xs=1.),
             Dataset("dy",
                 folder=os.path.join(skim_directory, "DY_Incl"),
-                process=self.processes.get("dy_m-50"),
+                process=self.processes.get("dy"),
                 file_pattern="output_.*root",
                 skipFiles=skipFiles_dict["dy"],
                 xs=1.),
@@ -655,80 +681,16 @@ class Config(base_config):
     def add_weights(self):
         weights = DotDict()
         weights.default = "1"
-        # weights.total_events_weights = ["totalWeight"]
-        # weights.total_events_weights = ["MC_weight", "PUReweight", "PUjetID_SF", "L1pref_weight", "prescaleWeight",
-        #     "trigSF", "bTagweightReshape"]
         weights.total_events_weights = ["MC_weight", "PUReweight", "L1pref_weight", "trigSF", "IdFakeSF_deep_2d", "PUjetID_SF", "bTagweightReshape"]
-        # weights.mutau = ["totalWeight"]
-        # weights.mutau = ["MC_weight", "PUReweight", "PUjetID_SF", "L1pref_weight", "prescaleWeight",
-        #     "trigSF", "bTagweightReshape", "0.9890"]
-        # weights.etau = ["MC_weight", "PUReweight", "PUjetID_SF", "L1pref_weight", "prescaleWeight",
-        #     "trigSF", "bTagweightReshape", "0.9831"]
-        # weights.tautau = ["MC_weight", "PUReweight", "PUjetID_SF", "L1pref_weight",
-        #     # "prescaleWeight", "trigSF", "IdAndIsoAndFakeSF_deep_pt", "DYscale_MTT", "customTauIdSF",
-        #     "prescaleWeight", "trigSF", "bTagweightReshape", "1.0038"]
-        # weights.base= ["(((pairType == {0}) * {1}) + ((pairType != {0}) * 1))".format(
-        #     ic, " * ".join(weights[c.name]))
-        #     for ic, c in enumerate(self.channels)]
-        # weights.baseline = weights.base
         weights.base = ["MC_weight", "PUReweight", "L1pref_weight", "trigSF", "IdFakeSF_deep_2d", "PUjetID_SF", "bTagweightReshape"]
-        weights.base_selection = weights.base
+        weights.baseline = weights.base
         weights.resolved_1b = weights.base
         weights.resolved_2b = weights.base
         weights.resolved_1b_inv = weights.base
-        weights.boosted = weights.base
-        weights.vbf = weights.base 
+        weights.boosted_l = weights.base
+        weights.boosted_m = weights.base
         return weights
 
-
-    # def get_dataset_process_mapping(datasets, process_group_name):
-    #     mapping = {}
-    #     _processes = []
-    #     _datasets = []
-    #     for process in config.process_group_names:
-    #         for i, dataset in datasets:
-    #             _process = dataset.processes.get_first()
-    #             if process == _process or process.has_process(_process, deep=True):
-    #                 mapping[dataset] = process
-    #                 _processes.append((i, process))
-    #                 _datasets.append((i, dataset))
-    #     unique_processes = []
-    #     for _, process in _processes:
-    #         if process not in unique_processes:
-    #             unique_processes.append(process)
-
-    #     unique_datasets = []    
-    #     for _, dataset in _datasets:
-    #         if dataset not in unique_datasets:
-    #             unique_datasets.append(dataset)
-
-    #     return mapping, unique_processes, unique_datasets
-    
-    
-    # def get_dataset_process_mapping(datasets):
-    #     mapping = {}
-    #     _datasets = []
-    #     for dataset in datasets:
-    #         mapping[dataset] = process
-    #         _datasets.append(dataset)
-    #     # for process in config.process_group_names:
-    #     #     for i, dataset in datasets:
-    #     #         _process = dataset.processes.get_first()
-    #     #         if process == _process or process.has_process(_process, deep=True):
-    #     #             mapping[dataset] = process
-    #     #             _processes.append((i, process))
-    #     #             _datasets.append((i, dataset))
-    #     # unique_processes = []
-    #     # for _, process in _processes:
-    #     #     if process not in unique_processes:
-    #     #         unique_processes.append(process)
-
-    #     unique_datasets = []    
-    #     for _, dataset in _datasets:
-    #         if dataset not in unique_datasets:
-    #             unique_datasets.append(dataset)
-
-    #     return mapping, unique_datasets
 
 
 config = Config("qcd_llr_2018", year=2018, ecm=13, lumi_pb=59830)
