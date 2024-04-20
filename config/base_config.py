@@ -265,11 +265,12 @@ class Config(cmt_config):
 
             Process("tth", Label("t#bar{t}H"), color=(255, 153, 0), 
                 llr_name="ttH"),
-            Process("tth_bb", Label("t#bar{t}H"), color=(255, 153, 0), parent_process="tth"),
-            Process("tth_tautau", Label("t#bar{t}H"), color=(255, 153, 0), parent_process="tth"),
-            Process("tth_nonbb", Label("t#bar{t}H"), color=(255, 153, 0), parent_process="tth"),
+            Process("tth_bb", Label("t#bar{t}H"), color=(255, 153, 0), parent_process="others"),
+            Process("tth_tautau", Label("t#bar{t}H"), color=(255, 153, 0), parent_process="others"),
+            Process("tth_nonbb", Label("t#bar{t}H"), color=(255, 153, 0), parent_process="others"),
 
-            Process("wjets", Label("W + jets"), color=(134, 136, 138), parent_process="others",
+            Process("w+jets", Label("W + jets"), color=(165, 225, 154), llr_name="WJets"),
+            Process("wjets", Label("W + jets"), color=(165, 225, 154), parent_process="w+jets",
                 llr_name="WJets"),
             Process("tw", Label("t + W"), color=(134, 136, 138), parent_process="others",
                 llr_name="TW"),
@@ -382,29 +383,18 @@ class Config(cmt_config):
                 "tt",
                 "dy",
                 "tth",
+                "w+jets",
                 "others",
                 "data",
             ],
             "plots" : [
-                "tt"
-                "tth"
-                "dy"
-                "WJetsToLNu_TuneCP5_13TeV-madgraph",
-                "WJetsToLNu_HT-70To100",
-                "WJetsToLNu_HT-100To200",
-                "WJetsToLNu_HT-200To400",
-                "WJetsToLNu_HT-400To600",
-                "WJetsToLNu_HT-600To800",
-                "WJetsToLNu_HT-800To1200",
-                "WJetsToLNu_HT-1200To2500",
-                "WJetsToLNu_HT-2500ToInf",
-                "EWKWPlus2Jets_WToLNu",
-                "EWKWMinus2Jets_WToLNu",
-                "ST_tW_antitop_5f_inclusive",
-                "ST_tW_top_5f_inclusive",
-                "ST_t-channel_top",
-                "ST_t-channel_antitop",
-                "data"
+                "tt",
+                "dy",
+                "tth",
+                "w+jets",
+                "others",
+                "data",
+                #"signal?"
 
             ]
         }

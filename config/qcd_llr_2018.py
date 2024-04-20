@@ -110,38 +110,6 @@ class Config(base_config):
     #     process_group_names = {
     #         "default": [
     #             # "ggf_sm",
-    #             # "data_tau",
-    #             # "dy_high",
-    #             # "tt_dl",
-    #             # "data",
-    #             "dy",
-    #             "tt",
-    #             "others"
-    #         ],
-    #         "signal": [
-    #             "ggf"
-    #         ],
-    #         "other_bck": [
-    #             "others"
-    #         ],
-    #         "data": [
-    #             "data"
-    #         ],
-    #         "plots" : [
-    #             "tt_sl",
-    #             "tt_dl",
-    #             "tt_fh",
-    #             "tth_nonbb",
-    #             "tth_bb",
-    #             # "dy_m-50"
-    #             # "dy_0j",
-    #             # "others",
-    #             "data_mutau",
-    #             "dy_m-50",
-    #             "dy_0j",
-    #             "dy_1j",
-    #             "wjets"
-
     #         ]
 
     #     }
@@ -507,11 +475,23 @@ class Config(base_config):
                 folder=os.path.join(skim_directory, "TT_FullyLep"),
                 process=self.processes.get("tt_dl"),
                 file_pattern="output_.*root",
+                merging={
+                    "boosted_l": 5,
+                    "boosted_m": 5,
+                },
                 xs=1.),             
             Dataset("tt_sl",
                 folder=os.path.join(skim_directory, "TT_SemiLep"),
                 process=self.processes.get("tt_sl"),
                 file_pattern="output_.*root",
+                merging={
+                    "tautau": 20,
+                    "mutau": 60,
+                    "etau": 40,
+                    "baseline": 10,
+                    "boosted_l": 10,
+                    "boosted_m": 10,
+                },
                 xs=1.),
             Dataset("tt_fh",
                 folder=os.path.join(skim_directory, "TT_Hadronic"),
@@ -675,7 +655,7 @@ class Config(base_config):
                         skipFiles=skipFiles_dict[name],
                         xs=1.),  # already normalised to xs
                 )
-                # print("process", self.processes.get(process))
+                print("process", self.processes.get(process))
         return ObjectCollection(datasets)
 
     def add_weights(self):
@@ -693,4 +673,4 @@ class Config(base_config):
 
 
 
-config = Config("qcd_llr_2018", year=2018, ecm=13, lumi_pb=59830)
+config = Config("qcd_llr_2018", year=2018, ecm=13, lumi_pb=59741)

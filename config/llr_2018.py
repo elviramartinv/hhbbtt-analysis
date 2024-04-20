@@ -18,6 +18,7 @@ class Config(cmt_config):
                 Tight=6, VTight=7, VVTight=5),
             vsmu=DotDict(VLoose=1, Loose=2, Medium=3, Tight=4),
         )
+        # self.processes = self.add_processes()
         self.regions = self.add_regions()
         self.categories = self.add_categories(btag="bjet{}_bID_deepFlavor")
         self.tree_name = "HTauTauTree"
@@ -29,7 +30,9 @@ class Config(cmt_config):
 
     def add_regions(self):
         selection = OrderedDict()
-        region_names = ["Signal region", "OS inv. iso", "SS iso", "SS inv. iso"]
+        region_names = ["Signal region", "OS inv. iso", "SS iso", "SS inv. iso", "OS inv. iso vvvl_vvl", 
+            "OS inv. iso vvl_vl", "OS inv. iso vl_l", "OS inv. iso l_m", "SS inv. iso vvvl_vvl",
+            "SS inv. iso vvl_vl", "SS inv. iso vl_l", "SS inv. iso l_m"]
         selection["os_iso"] = {
             "mutau": ["isOS == 1", "dau1_iso < 0.15",
                 "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium],
@@ -66,6 +69,102 @@ class Config(cmt_config):
             "tautau": ["isOS == 0",
                 "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
                 "dau2_deepTauVsJet >= 1",
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Medium],
+        }
+        selection["os_inviso__vvvl_vvl"] = {
+            "mutau": ["isOS == 1", "dau1_iso < 0.15", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVVLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VVLoose],
+            "etau": ["isOS == 1", "dau1_eleMVAiso == 1", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVVLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VVLoose],
+            "tautau": ["isOS == 1",
+                "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVVLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VVLoose],
+        }
+        selection["os_inviso__vvl_vl"] = { 
+            "mutau": ["isOS == 1", "dau1_iso < 0.15", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VLoose],
+            "etau": ["isOS == 1", "dau1_eleMVAiso == 1", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VLoose],
+            "tautau": ["isOS == 1",
+                "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VLoose],
+        }
+        selection["os_inviso__vl_l"] = {
+            "mutau": ["isOS == 1", "dau1_iso < 0.15", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Loose],
+            "etau": ["isOS == 1", "dau1_eleMVAiso == 1", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Loose],
+            "tautau": ["isOS == 1",
+                "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Loose],
+        }
+        selection["os_inviso__l_m"] = {
+            "mutau": ["isOS == 1", "dau1_iso < 0.15", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.Loose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Medium],
+            "etau": ["isOS == 1", "dau1_eleMVAiso == 1", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.Loose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Medium],
+            "tautau": ["isOS == 1",
+                "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.Loose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Medium],
+        }
+        selection["ss_inviso__vvvl_vvl"] = {
+            "mutau": ["isOS == 0", "dau1_iso < 0.15", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVVLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VVLoose],
+            "etau": ["isOS == 0", "dau1_eleMVAiso == 1", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVVLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VVLoose],
+            "tautau": ["isOS == 0",
+                "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVVLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VVLoose],
+        }
+        selection["ss_inviso__vvl_vl"] = {
+            "mutau": ["isOS == 0", "dau1_iso < 0.15", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VLoose],
+            "etau": ["isOS == 0", "dau1_eleMVAiso == 1", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VLoose],
+            "tautau": ["isOS == 0",
+                "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VLoose],
+        }
+        selection["ss_inviso__vl_l"] = {
+            "mutau": ["isOS == 0", "dau1_iso < 0.15", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Loose],
+            "etau": ["isOS == 0", "dau1_eleMVAiso == 1", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Loose],
+            "tautau": ["isOS == 0",
+                "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VLoose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Loose],
+        }
+        selection["ss_inviso__l_m"] = {
+            "mutau": ["isOS == 0", "dau1_iso < 0.15", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.Loose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Medium],
+            "etau": ["isOS == 0", "dau1_eleMVAiso == 1", 
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.Loose,
+                "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Medium],
+            "tautau": ["isOS == 0",
+                "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
+                "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.Loose,
                 "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Medium],
         }
         regions = []
@@ -261,74 +360,74 @@ class Config(cmt_config):
                 x_title=Label("HH #chi^2 (Kin. Fit)")),
 
             # VBFjet features
-            Feature("vbfjet1_pt", "VBFjet1_pt", binning=(20, 20, 220),
-                selection="VBFjet1_pt > -999",
-                x_title=Label("VBF jet 1 p_{T}"),
-                units="GeV"),
-            Feature("vbfjet1_eta", "VBFjet1_eta", binning=(20, -5., 5.),
-                selection="VBFjet1_pt > -999",
-                x_title=Label("VBF jet 1 #eta")),
-            Feature("vbfjet1_phi", "VBFjet1_phi", binning=(20, -3.2, 3.2),
-                selection="VBFjet1_pt > -999",
-                x_title=Label("VBF jet 1 #phi")),
-            Feature("vbfjet1_mass", "VBFjet1_mass", binning=(10, 50, 150),
-                selection="VBFjet1_pt > -999",
-                x_title=Label("VBF jet 1 m"),
-                units="GeV"),
-            Feature("vbfjet2_pt", "VBFjet2_pt", binning=(20, 20, 220),
-                selection="VBFjet1_pt > -999",
-                x_title=Label("VBF jet 2 p_{T}"),
-                units="GeV"),
-            Feature("vbfjet2_eta", "VBFjet2_eta", binning=(20, -5., 5.),
-                selection="VBFjet1_pt > -999",
-                x_title=Label("VBF jet 2 #eta")),
-            Feature("vbfjet2_phi", "VBFjet2_phi", binning=(20, -3.2, 3.2),
-                selection="VBFjet1_pt > -999",
-                x_title=Label("VBF jet 2 #phi")),
-            Feature("vbfjet2_mass", "VBFjet2_mass", binning=(10, 50, 150),
-                selection="VBFjet1_pt > -999",
-                x_title=Label("VBF jet 2 m"),
-                units="GeV"),
+            # Feature("vbfjet1_pt", "VBFjet1_pt", binning=(20, 20, 220),
+            #     selection="VBFjet1_pt > -999",
+            #     x_title=Label("VBF jet 1 p_{T}"),
+            #     units="GeV"),
+            # Feature("vbfjet1_eta", "VBFjet1_eta", binning=(20, -5., 5.),
+            #     selection="VBFjet1_pt > -999",
+            #     x_title=Label("VBF jet 1 #eta")),
+            # Feature("vbfjet1_phi", "VBFjet1_phi", binning=(20, -3.2, 3.2),
+            #     selection="VBFjet1_pt > -999",
+            #     x_title=Label("VBF jet 1 #phi")),
+            # Feature("vbfjet1_mass", "VBFjet1_mass", binning=(10, 50, 150),
+            #     selection="VBFjet1_pt > -999",
+            #     x_title=Label("VBF jet 1 m"),
+            #     units="GeV"),
+            # Feature("vbfjet2_pt", "VBFjet2_pt", binning=(20, 20, 220),
+            #     selection="VBFjet1_pt > -999",
+            #     x_title=Label("VBF jet 2 p_{T}"),
+            #     units="GeV"),
+            # Feature("vbfjet2_eta", "VBFjet2_eta", binning=(20, -5., 5.),
+            #     selection="VBFjet1_pt > -999",
+            #     x_title=Label("VBF jet 2 #eta")),
+            # Feature("vbfjet2_phi", "VBFjet2_phi", binning=(20, -3.2, 3.2),
+            #     selection="VBFjet1_pt > -999",
+            #     x_title=Label("VBF jet 2 #phi")),
+            # Feature("vbfjet2_mass", "VBFjet2_mass", binning=(10, 50, 150),
+            #     selection="VBFjet1_pt > -999",
+            #     x_title=Label("VBF jet 2 m"),
+            #     units="GeV"),
 
-            # VBFjj
-            Feature("VBFjj_mass", "VBFjj_mass", binning=(40, 0, 1200),
-                selection="VBFjet1_pt > -999",
-                x_title=Label("VBF jj mass"),
-                units="GeV"),
-            Feature("VBFjj_deltaEta", "VBFjj_deltaEta", binning=(40, 0, 8),
-                selection="VBFjet1_pt > -999",
-                x_title=Label("#Delta#eta(VBFjj)")),
-            Feature("VBFjj_deltaPhi", "VBFjj_deltaPhi", binning=(40, 0, 6.4),
-                selection="VBFjet1_pt > -999",
-                x_title=Label("#Delta#phi(VBFjj)")),
+            # # VBFjj
+            # Feature("VBFjj_mass", "VBFjj_mass", binning=(40, 0, 1200),
+            #     selection="VBFjet1_pt > -999",
+            #     x_title=Label("VBF jj mass"),
+            #     units="GeV"),
+            # Feature("VBFjj_deltaEta", "VBFjj_deltaEta", binning=(40, 0, 8),
+            #     selection="VBFjet1_pt > -999",
+            #     x_title=Label("#Delta#eta(VBFjj)")),
+            # Feature("VBFjj_deltaPhi", "VBFjj_deltaPhi", binning=(40, 0, 6.4),
+            #     selection="VBFjet1_pt > -999",
+            #     x_title=Label("#Delta#phi(VBFjj)")),
 
             # weights
-            Feature("PUjetID_SF", "PUjetID_SF", binning=(100, 0, 2),
-                x_title=Label("PUjetID_SF"), tags=["weight"], systematic=["pujetsyst"]),
-            Feature("PUReweight", "PUReweight", binning=(100, 0, 0.05),
-                x_title=Label("PUReweight"), tags=["weight"]),
-            Feature("bTagweightReshape", "bTagweightReshape", binning=(100, 0, 2),
-                x_title=Label("b-tag efficiency weight"), tags=["weight"],
-                systematics=["jet_1", "jet_2", "jet_3", "jet_4", "jet_5", "jet_6",
-                    "jet_7", "jet_8", "jet_9", "jet_10", "jet_11",
-                    "ls", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2"]),
-            Feature("trigSF", "trigSF", binning=(100, 0.6, 1.1),
-                x_title=Label("Trigger efficiency scale factor"), tags=["weight"],
-                systematics=["trigSFmuon", "trigSFele", "trigSFDM0", "trigSFDM1", "trigSFDM10", "trigSFDM11", "trigSFVBFjet"]),
-            Feature("IdAndIsoSF_deep_pt", "IdAndIsoAndFakeSF_deep_pt", binning=(100, 0.8, 1.2),
-                x_title=Label("Lepton identification and isolation scale factor"), tags=["weight"],
-                systematics=["idAndIsoAndFakeSF_tauid_pt20to25", "idAndIsoAndFakeSF_tauid_pt25to30",
-                    "idAndIsoAndFakeSF_tauid_pt30to35", "idAndIsoAndFakeSF_tauid_pt35to40",
-                    "idAndIsoAndFakeSF_tauid_pt40toInf", "idAndIsoAndFakeSF_mutauFR_etaLt0p4",
-                    "idAndIsoAndFakeSF_mutauFR_eta0p4to0p8", "idAndIsoAndFakeSF_mutauFR_eta0p8to1p2",
-                    "idAndIsoAndFakeSF_mutauFR_eta1p2to1p7", "idAndIsoAndFakeSF_mutauFR_etaGt1p7",
-                    "idAndIsoAndFakeSF_etauFR_barrel", "idAndIsoAndFakeSF_etauFR_endcap"]),
-            Feature("smearing_factor", "{bjet1_smearFactor, bjet1_smearFactor2}", binning=(100, 0, 2),
-                x_title=Label("smearing_factor"), tags=["weight"]),
-            Feature("L1pref_weight", "L1pref_weight", binning=(100, 0.9, 1.1),
-                x_title=Label("L1 prefiring weight"), tags=["weight"]),
-            Feature("prescaleWeight", "prescaleWeight", binning=(100, 0, 2),
-                x_title=Label("prescaleWeight"), tags=["weight"]),
+            # Feature("PUjetID_SF", "PUjetID_SF", binning=(100, 0, 2),
+            #     x_title=Label("PUjetID_SF"), tags=["weight"], systematic=["pujetsyst"]),
+            # Feature("PUReweight", "PUReweight", binning=(100, 0, 0.05),
+            #     x_title=Label("PUReweight"), tags=["weight"]),
+            # Feature("bTagweightReshape", "bTagweightReshape", binning=(100, 0, 2),
+            #     x_title=Label("b-tag efficiency weight"), tags=["weight"],
+            #     systematics=["jet_1", "jet_2", "jet_3", "jet_4", "jet_5", "jet_6",
+            #         "jet_7", "jet_8", "jet_9", "jet_10", "jet_11",
+            #         "ls", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2"]),
+            # Feature("trigSF", "trigSF", binning=(100, 0.6, 1.1),
+            #     x_title=Label("Trigger efficiency scale factor"), tags=["weight"],
+            #     systematics=["trigSFmuon", "trigSFele", "trigSFDM0", "trigSFDM1", "trigSFDM10", "trigSFDM11", "trigSFVBFjet"]),
+            # Feature("IdAndIsoSF_deep_pt", "IdAndIsoAndFakeSF_deep_pt", binning=(100, 0.8, 1.2),
+            #     x_title=Label("Lepton identification and isolation scale factor"), tags=["weight"],
+            #     systematics=["idAndIsoAndFakeSF_tauid_pt20to25", "idAndIsoAndFakeSF_tauid_pt25to30",
+            #         "idAndIsoAndFakeSF_tauid_pt30to35", "idAndIsoAndFakeSF_tauid_pt35to40",
+            #         "idAndIsoAndFakeSF_tauid_pt40toInf", "idAndIsoAndFakeSF_mutauFR_etaLt0p4",
+            #         "idAndIsoAndFakeSF_mutauFR_eta0p4to0p8", "idAndIsoAndFakeSF_mutauFR_eta0p8to1p2",
+            #         "idAndIsoAndFakeSF_mutauFR_eta1p2to1p7", "idAndIsoAndFakeSF_mutauFR_etaGt1p7",
+            #         "idAndIsoAndFakeSF_etauFR_barrel", "idAndIsoAndFakeSF_etauFR_endcap"]),
+            # Feature("smearing_factor", "{bjet1_smearFactor, bjet1_smearFactor2}", binning=(100, 0, 2),
+            #     x_title=Label("smearing_factor"), tags=["weight"]),
+            # Feature("L1pref_weight", "L1pref_weight", binning=(100, 0.9, 1.1),
+            #     x_title=Label("L1 prefiring weight"), tags=["weight"]),
+            # Feature("prescaleWeight", "prescaleWeight", binning=(100, 0, 2),
+            #     x_title=Label("prescaleWeight"), tags=["weight"]),
 
             # DNN
             Feature("dnn", "DNNoutSM_kl_1", binning=(50, 0, 1),
@@ -339,8 +438,7 @@ class Config(cmt_config):
                     "jet_7", "jet_8", "jet_9", "jet_10", "jet_11"]),
         ]
         return ObjectCollection(features)
-        
-    
+           
     def add_datasets(self):
         skim_directory = "/eos/user/j/jmotta/SKIMMED_Legacy2018_16Feb2021_HHbtag"
         datasets = [
@@ -585,7 +683,6 @@ class Config(cmt_config):
     def add_weights(self):
         weights = DotDict()
         weights.default = "1"
-        weights.total_events_weights = ["totalWeight"]
 
         # The last number is the needed scaling to correct the bTagweightReshape weights
         # each channel has its own, and this should be propagated correctly to each category.
