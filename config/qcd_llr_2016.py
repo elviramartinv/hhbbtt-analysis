@@ -48,8 +48,8 @@ class Config(base_config):
             m=[df_pnet(">", "medium")],
         )
 
-        baseline = ["pairType >= 0 && pairType <= 2 && nbjetscand > 1 && nleps == 0"]
-        baseline_boosted = ["pairType >= 0 && pairType <= 2 && nleps == 0 && isBoosted == 1"]
+        baseline = ["(isLeptrigger || isMETtrigger || isSingleTautrigger) && pairType >= 0 && pairType <= 2 && nbjetscand > 1 && nleps == 0"]
+        baseline_boosted = ["(isLeptrigger || isMETtrigger || isSingleTautrigger) && pairType >= 0 && pairType <= 2 && nleps == 0 && isBoosted == 1"]
         
         massCut = ["{{Hbb_mass}} > 50 && {{Hbb_mass}} < 270 && {{Htt_mass}} > 20 && {{Htt_mass}} < 130"]
         massCutInv = ["{{Hbb_mass}} < 50 || {{Hbb_mass}} > 270 || {{Htt_mass}} < 20 || {{Htt_mass}} > 130"]
@@ -85,8 +85,8 @@ class Config(base_config):
         })
         sel["boosted_m_llr_combined"] = self.join_selection_channels(sel["boosted_m_llr"])
 
-        categories.get("baseline").selection = "pairType >= 0 && pairType <= 2 && nbjetscand > 1 && nleps == 0"
-        categories.get("baseline_boosted").selection = "pairType >= 0 && pairType <= 2 && nleps == 0 && isBoosted == 1"
+        categories.get("baseline").selection = "(isLeptrigger || isMETtrigger || isSingleTautrigger) && pairType >= 0 && pairType <= 2 && nbjetscand > 1 && nleps == 0"
+        categories.get("baseline_boosted").selection = "(isLeptrigger || isMETtrigger || isSingleTautrigger) && pairType >= 0 && pairType <= 2 && nleps == 0 && isBoosted == 1"
         categories.get("resolved_1b").selection = sel["resolved_1b_llr_combined"]
         categories.get("resolved_2b").selection = sel["resolved_2b_llr_combined"]
         categories.get("resolved_1b_inv").selection = sel["resolved_1b_llr_combined_inv"]
@@ -130,9 +130,9 @@ class Config(base_config):
             "dy_PtZ_0To50":"DY_PtZ0To50",
             "dy_PtZ_50To100":"DY_PtZ50To100",
             "dy_PtZ_100To250":"DY_PtZ100To250",
-            "dy_PtZ_250To400":"DY_PtZ250To400",
-            "dy_PtZ_400To650":"DY_PtZ400To650",
-            "dy_PtZ_650ToInf":"DY_PtZ650ToInf",
+            "dy_PtZ_250To400":"DY_PtZ250to400",
+            "dy_PtZ_400To650":"DY_PtZ400to650",
+            "dy_PtZ_650ToInf":"DY_PtZ650toInf",
             "tt_dl":"TT_FullyLep",
             "tt_sl":"TT_SemiLep",   
             "tt_fh":"TT_Hadronic",
@@ -142,6 +142,7 @@ class Config(base_config):
             "data_mutau": "Muon",
             "data_etau":"EGamma",
             "data_tau":"Tau",
+            "data_met":"MET",
             "ST_tW_top":"ST_tW_top",
             "ST_tW_antitop":"ST_tW_antitop",
             "WJets_HT0To70": "WJets_HT0To70", 
@@ -156,8 +157,8 @@ class Config(base_config):
             "EWKWMinus2Jets_WToLNu": "EWKWMinus2Jets_WToLNu",
             "EWKWPlus2Jets_WToLNu": "EWKWPlus2Jets_WToLNu",
             "EWKZ2Jets_ZToLL": "EWKZ2Jets_ZToLL",
-            "ST_t-channel_top": "ST_t-channel_top",
-            "ST_t-channel_antitop": "ST_t-channel_antitop",
+            "ST_tchannel_top": "ST_tchannel_top",
+            "ST_tchannel_antitop": "ST_tchannel_antitop",
             "WW": "WW",
             "WZ": "WZ",
             "ZZ": "ZZ",
@@ -188,7 +189,7 @@ class Config(base_config):
 
         for dataset_name, dataset in skimdatasets.items():
             skipFiles = []
-            if dataset_name in ["data_etau", "data_mutau", "data_tau"]:
+            if dataset_name in ["data_etau", "data_mutau", "data_tau", "data_met"]:
                 
                 for era in ["B", "C", "D", "E", "F"]:
                     folder = os.path.join(skim_directory, dataset + era)
@@ -239,8 +240,11 @@ class Config(base_config):
                     "mutau": 60,
                     "etau": 40,
                     "baseline": 10,
-                    "boosted_l": 10,
-                    "boosted_m": 10,
+                    "resolved_1b": 5,
+                    "resolved_1b_inv": 5,
+                    "resolved_2b": 5,
+                    "boosted_l": 5,
+                    "boosted_m": 5,
                 },
                 xs=1.),
             Dataset("tt_fh",
@@ -285,18 +289,18 @@ class Config(base_config):
                 file_pattern="output_.*root",
                 xs=1.),
             Dataset("dy_PtZ_250To400",
-                folder=os.path.join(skim_directory, "DY_PtZ250To400"),
+                folder=os.path.join(skim_directory, "DY_PtZ250to400"),
                 process=self.processes.get("dy_PtZ_250To400"),
                 skipFiles=skipFiles_dict["dy_PtZ_250To400"],
                 file_pattern="output_.*root",
                 xs=1.),
             Dataset("dy_PtZ_400To650",
-                folder=os.path.join(skim_directory, "DY_PtZ400To650"),
+                folder=os.path.join(skim_directory, "DY_PtZ400to650"),
                 process=self.processes.get("dy_PtZ_400To650"),
                 file_pattern="output_.*root",
                 xs=1.),
             Dataset("dy_PtZ_650ToInf",
-                folder=os.path.join(skim_directory, "DY_PtZ650ToInf"),
+                folder=os.path.join(skim_directory, "DY_PtZ650toInf"),
                 process=self.processes.get("dy_PtZ_650ToInf"),
                 file_pattern="output_.*root",
                 xs=1.),
@@ -348,12 +352,12 @@ class Config(base_config):
                 #     "mutau": 20,
                 # },
                 xs=1.),
-            # Dataset("data_MET",
-            #     folder=[os.path.join(skim_directory, "MET_Run2018%s" % era)
-            #         for era in ["B", "C", "D", "E", "F"]],
-            #     process=self.processes.get("data_MET"),
-            #     file_pattern="output_.*root",
-            #     xs=1.),
+            Dataset("data_met",
+                folder=[os.path.join(skim_directory, "MET%s" % era)
+                    for era in ["B", "C", "D", "E", "F"]],
+                process=self.processes.get("data_met"),
+                file_pattern="output_.*root",
+                xs=1.),
 
         ]
         other_backgrounds = {
@@ -365,7 +369,7 @@ class Config(base_config):
                 "EWKWMinus2Jets_WToLNu", "EWKWPlus2Jets_WToLNu", "EWKZ2Jets_ZToLL",
             ],
             "singlet": [
-                "ST_t-channel_antitop", "ST_t-channel_top",
+                "ST_tchannel_antitop", "ST_tchannel_top",
             ],
             "tw": [
                 "ST_tW_antitop", "ST_tW_top",
