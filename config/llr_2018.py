@@ -41,6 +41,17 @@ class Config(cmt_config):
             "tautau": ["isOS == 1",
                 "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
                 "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium],
+        ################### QCDTest3 only
+            # "mutau": ["isOS == 1", "dau1_iso < 0.15",
+            #     "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVLoose,
+            #     "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VLoose],
+            # "etau": ["isOS == 1", "dau1_eleMVAiso == 1",
+            #     "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVLoose,
+            #     "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VLoose],
+            # "tautau": ["isOS == 1",
+            #     "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
+            #     "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVLoose,
+            #     "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VLoose],
         }
         selection["os_inviso"] = {
             "mutau": ["isOS == 1", "dau1_iso < 0.15", "dau2_deepTauVsJet >= 1",
@@ -51,6 +62,17 @@ class Config(cmt_config):
                 "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
                 "dau2_deepTauVsJet >= 1",
                 "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Medium],
+        ################### QCDTest3 only
+            # "mutau": ["isOS == 1", "dau1_iso < 0.15", 
+            #     "dau2_deepTauVsJet >= %s" %self.deeptau.vsjet.VVVLoose,
+            #     "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VVLoose],
+            # "etau": ["isOS == 1", "dau1_eleMVAiso == 1",
+            #     "dau2_deepTauVsJet >= %s" %self.deeptau.vsjet.VVVLoose,
+            #     "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VVLoose],
+            # "tautau": ["isOS == 1",
+            #     "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
+            #     "dau2_deepTauVsJet >= %s" %self.deeptau.vsjet.VVVLoose,
+            #     "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VVLoose],
         }
         selection["ss_iso"] = {
             "mutau": ["isOS == 0", "dau1_iso < 0.15",
@@ -60,6 +82,17 @@ class Config(cmt_config):
             "tautau": ["isOS == 0",
                 "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
                 "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium],
+        ################### QCDTest3 only
+            # "mutau": ["isOS == 0", "dau1_iso < 0.15",
+            #     "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVLoose,
+            #     "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VLoose],
+            # "etau": ["isOS == 0", "dau1_eleMVAiso == 1",
+            #     "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVLoose,
+            #     "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VLoose],
+            # "tautau": ["isOS == 0",
+            #     "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
+            #     "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVLoose,
+            #     "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VLoose],
         }
         selection["ss_inviso"] = {
             "mutau": ["isOS == 0", "dau1_iso < 0.15", "dau2_deepTauVsJet >= 1",
@@ -70,6 +103,17 @@ class Config(cmt_config):
                 "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
                 "dau2_deepTauVsJet >= 1",
                 "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Medium],
+        ################### QCDTest3 only
+            # "mutau": ["isOS == 0", "dau1_iso < 0.15",
+            #     "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVVLoose,
+            #     "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VVLoose],
+            # "etau": ["isOS == 0", "dau1_eleMVAiso == 1",
+            #     "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVVLoose,
+            #     "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VVLoose],
+            # "tautau": ["isOS == 0",
+            #     "dau1_deepTauVsJet >= %s" % self.deeptau.vsjet.Medium,
+            #     "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.VVVLoose,
+            #     "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.VVLoose],
         }
         selection["os_inviso__vvvl_vvl"] = {
             "mutau": ["isOS == 1", "dau1_iso < 0.15", 
@@ -167,6 +211,7 @@ class Config(cmt_config):
                 "dau2_deepTauVsJet >= %s" % self.deeptau.vsjet.Loose,
                 "dau2_deepTauVsJet < %s" % self.deeptau.vsjet.Medium],
         }
+
         regions = []
         for channel in self.channels:
             regions.append(channel)
@@ -256,9 +301,17 @@ class Config(cmt_config):
                 x_title=Label("bb #Delta p_t"),
                 units="GeV"),
 
+            # Deepflavour
+            Feature("bjet1_df", "bjet1_bID_deepFlavor", binning=(15, 0, 1),
+                x_title=Label("b_{1} deepFlavor bID")),
+            Feature("bjet2_df", "bjet2_bID_deepFlavor", binning=(15, 0, 1),
+                x_title=Label("b_{2} deepFlavor bID")),
+
             # lepton features
-            Feature("lep1_pt", "dau1_pt", binning=(15, 20, 170),
+            Feature("lep1_pt", "dau1_pt", binning=(20, 0, 200),
                 x_title=Label("#tau_{1} p_{t}"),
+                systematics=["muon", "electron_dm0", "electron_dm1",
+                            "tau_dm0", "tau_dm1", "tau_dm10", "tau_dm11"],
                 units="GeV"),
             Feature("lep1_eta", "dau1_eta", binning=(20, -5., 5.),
                 x_title=Label("#tau_{1} #eta")),
@@ -270,8 +323,10 @@ class Config(cmt_config):
             Feature("lep1_e", "dau1_e", binning=(28, 10, 290),
                 x_title=Label("#tau_{1} e"),
                 units="GeV"),
-            Feature("lep2_pt", "dau2_pt", binning=(15, 20, 170),
+            Feature("lep2_pt", "dau2_pt", binning=(20, 0, 200),
                 x_title=Label("#tau_{2} p_{t}"),
+                systematics=["muon", "electron_dm0", "electron_dm1",
+                            "tau_dm0", "tau_dm1", "tau_dm10", "tau_dm11"],
                 units="GeV"),
             Feature("lep2_eta", "dau2_eta", binning=(20, -5., 5.),
                 x_title=Label("#tau_{2} #eta")),
@@ -283,6 +338,21 @@ class Config(cmt_config):
             Feature("lep2_e", "dau2_e", binning=(28, 10, 290),
                 x_title=Label("#tau_{2} e"),
                 units="GeV"),
+
+            # DeepTau 
+            Feature("lep1_dtvsmu", "dau1_deepTauVsMu", binning=(10, -0.5, 9.5),
+                    x_title=Label("#tau_{1} deepTau vs mu")),
+            Feature("lep1_dtvse", "dau1_deepTauVsEle", binning=(10, -0.5, 9.5),
+                    x_title=Label("#tau_{1} deepTau vs ele")),
+            Feature("lep1_dtvsjet", "dau1_deepTauVsJet", binning=(10, -0.5, 9.5),
+                    x_title=Label("#tau_{1} deepTau vs jet")),
+            Feature("lep2_dtvsmu", "dau2_deepTauVsMu", binning=(10, -0.5, 9.5),
+                    x_title=Label("#tau_{2} deepTau vs mu")),
+            Feature("lep2_dtvse", "dau2_deepTauVsEle", binning=(10, -0.5, 9.5),
+                    x_title=Label("#tau_{2} deepTau vs ele")),
+            Feature("lep2_dtvsjet", "dau2_deepTauVsJet", binning=(10, -0.5, 9.5),
+                    x_title=Label("#tau_{2} deepTau vs jet")),
+
 
             # MET
             Feature("met_pt", "met_et", binning=(10, 50, 150),
@@ -353,10 +423,10 @@ class Config(cmt_config):
                 units="GeV"),
 
             # HH KinFit
-            Feature("HHKinFit_mass", "HHKin_mass_raw", binning=(50, 200, 1200),
+            Feature("HHKinFit_mass", "HHKin_mass", binning=(50, 200, 1200),
                 x_title=Label("HH mass"),
                 units="GeV"),
-            Feature("HHKinFit_chi2", "HHKin_mass_raw_chi2", binning=(30, 0, 10),
+            Feature("HHKinFit_chi2", "HHKin_chi2", binning=(30, 0, 10),
                 x_title=Label("HH #chi^2 (Kin. Fit)")),
 
             # VBFjet features
