@@ -241,7 +241,6 @@ class Config(base_config):
                     "etau": 40,
                     "baseline": 10,
                     "resolved_1b": 5,
-                    "resolved_1b_inv": 5,
                     "resolved_2b": 5,
                     "boosted_l": 5,
                     "boosted_m": 5,

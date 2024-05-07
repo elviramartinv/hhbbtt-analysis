@@ -165,12 +165,12 @@ class Config(base_config):
             "TTZZ": "TTZZ",
             "TTWW": "TTWW",
             "TTWZ": "TTWZ",
-            "TTWH": "TTWH",
-            "TTZH": "TTZH",
+            # "TTWH": "TTWH",
+            # "TTZH": "TTZH",
             "TTWJetsToLNu": "TTWJetsToLNu",
             "TTWJetsToQQ": "TTWJetsToQQ",
             "TTZToLLNuNu": "TTZToLLNuNu",
-            "TTZToQQ": "TTZToQQ",
+            # "TTZToQQ": "TTZToQQ",
             "GluGluHToTauTau": "GluGluHToTauTau",
             "VBFHToTauTau": "VBFHToTauTau",
             "WWW": "WWW",
@@ -179,8 +179,8 @@ class Config(base_config):
             "WWZ": "WWZ",
             "WminusHToTauTau": "WminusHToTauTau",
             "WplusHToTauTau": "WplusHToTauTau",
-            "ZH_HToBB_ZToLL": "ZH_HToBB_ZToLL",
-            "ZH_HToBB_ZToQQ": "ZH_HToBB_ZToQQ",
+            # "ZH_HToBB_ZToLL": "ZH_HToBB_ZToLL",
+            # "ZH_HToBB_ZToQQ": "ZH_HToBB_ZToQQ",
             "ZHToTauTau":"ZHToTauTau",
 
 
@@ -374,8 +374,10 @@ class Config(base_config):
             "tw": [
                 "ST_tW_antitop", "ST_tW_top",
             ],
+            # "zh": [
+            #     "ZH_HToBB_ZToLL", "ZHToTauTau", "ZH_HToBB_ZToQQ"
             "zh": [
-                "ZH_HToBB_ZToLL", "ZHToTauTau", "ZH_HToBB_ZToQQ"
+                "ZHToTauTau",
             ],
             "wh": [
                 "WminusHToTauTau", "WplusHToTauTau",
@@ -385,8 +387,10 @@ class Config(base_config):
                 "WZ",  
                 "ZZ",  
             ],
+            # "ttx": [
+            #     "TTZZ", "TTWW", "TTWZ", "TTWH", "TTZH", "TTWJetsToLNu", "TTWJetsToQQ", "TTZToLLNuNu", "TTZToQQ"
             "ttx": [
-                "TTZZ", "TTWW", "TTWZ", "TTWH", "TTZH", "TTWJetsToLNu", "TTWJetsToQQ", "TTZToLLNuNu", "TTZToQQ"
+                "TTZZ", "TTWW", "TTWZ", "TTWJetsToLNu", "TTWJetsToQQ", "TTZToLLNuNu",
             ],
             "ggh": [
                 "GluGluHToTauTau",
