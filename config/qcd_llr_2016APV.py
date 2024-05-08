@@ -191,7 +191,7 @@ class Config(base_config):
             skipFiles = []
             if dataset_name in ["data_etau", "data_mutau", "data_tau", "data_met"]:
                 
-                for era in ["F", "G", "H"]:
+                for era in ["B", "C", "D", "E", "F"]:
                     folder = os.path.join(skim_directory, dataset + era)
                     goodfiles = os.path.join(folder, "goodfiles.txt")
 
@@ -322,7 +322,7 @@ class Config(base_config):
             #### DATA
             Dataset("data_mutau",
                 folder=[os.path.join(skim_directory, "Muon%s" % era)
-                    for era in ["F", "G", "H"]],
+                    for era in ["B", "C", "D", "E", "F"]],
                 selection="pairType == 0",
                 process=self.processes.get("data_mutau"),
                 file_pattern="output_.*root",
@@ -333,7 +333,7 @@ class Config(base_config):
             Dataset("data_etau",
                 # folder=os.path.join(skim_directory, "SKIM_SingleMuon_Run2018A"),
                 folder=[os.path.join(skim_directory, "EGamma%s" % era)
-                    for era in ["F", "G", "H"]],
+                    for era in ["B", "C", "D", "E", "F"]],
                 selection="pairType == 1",
                 process=self.processes.get("data_etau"),
                 file_pattern="output_.*root",
@@ -344,7 +344,7 @@ class Config(base_config):
             Dataset("data_tau",
                 # folder=os.path.join(skim_directory, "SKIM_SingleMuon_Run2018A"),
                 folder=[os.path.join(skim_directory, "Tau%s" % era)
-                    for era in ["F", "G", "H"]],
+                    for era in ["B", "C", "D", "E", "F"]],
                 selection="pairType == 2",
                 process=self.processes.get("data_tau"),
                 file_pattern="output_.*root",
@@ -354,7 +354,7 @@ class Config(base_config):
                 xs=1.),
             Dataset("data_met",
                 folder=[os.path.join(skim_directory, "MET%s" % era)
-                    for era in ["F", "G", "H"]],
+                    for era in ["B", "C", "D", "E", "F"]],
                 process=self.processes.get("data_met"),
                 file_pattern="output_.*root",
                 xs=1.),
@@ -418,11 +418,12 @@ class Config(base_config):
         weights.total_events_weights = ["MC_weight", "PUReweight", "L1pref_weight", "trigSF", "IdFakeSF_deep_2d", "PUjetID_SF", "bTagweightReshape"]
         weights.base = ["MC_weight", "PUReweight", "L1pref_weight", "trigSF", "IdFakeSF_deep_2d", "PUjetID_SF", "bTagweightReshape"]
         weights.baseline = weights.base
+        weights.baseline_boosted = ["MC_weight", "PUReweight", "L1pref_weight", "trigSF", "IdFakeSF_deep_2d", "PUjetID_SF"]
         weights.resolved_1b = weights.base
         weights.resolved_2b = weights.base
         weights.resolved_1b_inv = weights.base
-        weights.boosted_l = weights.base
-        weights.boosted_m = weights.base
+        weights.boosted_l = weights.baseline_boosted
+        weights.boosted_m = weights.baseline_boosted
         return weights
 
 

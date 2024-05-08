@@ -665,11 +665,12 @@ class Config(base_config):
         weights.total_events_weights = ["MC_weight", "PUReweight", "L1pref_weight", "trigSF", "IdFakeSF_deep_2d", "PUjetID_SF", "bTagweightReshape"]
         weights.base = ["MC_weight", "PUReweight", "L1pref_weight", "trigSF", "IdFakeSF_deep_2d", "PUjetID_SF", "bTagweightReshape"]
         weights.baseline = weights.base
+        weights.baseline_boosted = ["MC_weight", "PUReweight", "L1pref_weight", "trigSF", "IdFakeSF_deep_2d", "PUjetID_SF"]
         weights.resolved_1b = weights.base
         weights.resolved_2b = weights.base
         weights.resolved_1b_inv = weights.base
-        weights.boosted_l = weights.base
-        weights.boosted_m = weights.base
+        weights.boosted_l = weights.baseline_boosted
+        weights.boosted_m = weights.baseline_boosted
         return weights
 
 
