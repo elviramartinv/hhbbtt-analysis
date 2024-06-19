@@ -76,7 +76,7 @@ def create_summary_test1(data):
             f.write(' & {} & {} & {} & {}  & {} \\\\ \n'.format(
                 ch_name, std_text, mean_text, fit_text, row[11]))
         f.write('\\end{tabular}\n')
-        f.write('\\caption{QCD Test 1 Summary 2017}\n')
+        f.write('\\caption{QCD Test 1 Summary}\n')
         f.write('\\label{tab:mi_tabla}\n')
         f.write('\\end{table}\n')
 
@@ -93,7 +93,7 @@ def create_QCD_uncertainty(data):
             if row[0] != last_cat:
                 cat_name = row[0].replace("_", " ")
                 if i != 0:
-                    f.write('\cline{1-5}')
+                    f.write('\cline{1-4}')
                 f.write('\multirow{3}{*}{' + cat_name + '}')
                 last_cat = row[0]
             if row[1] == "etau":
@@ -105,11 +105,74 @@ def create_QCD_uncertainty(data):
             f.write(' & {} & {} & {}  \\\\ \n'.format(
                 ch_name, row[2], row[3]))
         f.write('\\end{tabular}\n')
-        f.write('\\caption{QCD Uncertainties 2018}\n')
+        f.write('\\caption{QCD Uncertainties}\n')
         f.write('\\label{tab:mi_tabla}\n')
         f.write('\\end{table}\n' )
 
+# def create_envelope_table(data_envelope):
+#     with open('scripts/envelope.tex', 'w') as f:
+#         f.write('\\renewcommand{\\familydefault}{\\sfdefault}\n')
+#         f.write('\\begin{table}[h]\n')
+#         f.write('\\centering\n')
+#         f.write('\\begin{tabular}{c|c|c|c|c}\n')
+#         f.write('\\hline\n')
+#         f.write('Category & Channel & Standard & Max & Min \\\\ \\hline\n')
+#         last_cat = ""
+#         for i, row in enumerate(data_envelope):
+#             if row[0] != last_cat:
+#                 cat_name = row[0].replace("_", " ")
+#                 if i != 0:
+#                     f.write('\cline{1-5}')
+#                 f.write('\multirow{3}{*}{' + cat_name + '}')
+#                 last_cat = row[0]
+#             if row[1] == "etau":
+#                 ch_name = "$e\\tau$"
+#             elif row[1] == "mutau":
+#                 ch_name = "$\\mu\\tau$"
+#             elif row[1] == "tautau":
+#                 ch_name = "$\\tau\\tau$"
+#             f.write(' & {} & {} $\pm$ {} & {} $\pm$ {} & {} $\pm$ {} \\\\ \n'.format(
+#                 ch_name, row[2], row[3], row[4], row[5], row[6], row[7]))
+#         f.write('\\end{tabular}\n')
+#         f.write('\\caption{QCD Envelope}\n')
+#         f.write('\\label{tab:mi_tabla}\n')
+#         f.write('\\end{table}\n')
+
 def create_envelope_table(data_envelope):
+    with open('scripts/envelope.tex', 'w') as f:
+        f.write('\\renewcommand{\\familydefault}{\\sfdefault}\n')
+        f.write('\\begin{table}[h]\n')
+        f.write('\\centering\n')
+        f.write('\\begin{tabular}{c|c|c|c|c|c}\n')
+        f.write('\\hline\n')
+        f.write('Category & Channel & Std C/D & Max C/D & Min C/D & Envelope \\\\ \\hline\n')
+        last_cat = ""
+        for i, row in enumerate(data_envelope):
+            if row[0] != last_cat:
+                cat_name = row[0].replace("_", " ")
+                if i != 0:
+                    f.write('\cline{1-6}')
+                f.write('\multirow{3}{*}{' + cat_name + '}')
+                last_cat = row[0]
+            if row[1] == "etau":
+                ch_name = "$e\\tau$"
+            elif row[1] == "mutau":
+                ch_name = "$\\mu\\tau$"
+            elif row[1] == "tautau":
+                ch_name = "$\\tau\\tau$"
+            if row[2] == "0":
+                row[4] = "-"
+                row[6] = "-"
+                f.write(' & {} & {} & {} & {} & {} \\\\ \n'.format(
+                    ch_name, row[2], row[4], row[6], row[2]))
+            else:
+                f.write(' & {} & {} & {} & {} & ${}^{{+{}({}\%)}}_{{-{}({}\%)}}$ \\\\ \n'.format(
+                    ch_name, row[2], row[4], row[6], row[2], row[8], row[10], row[9], row[11]))
+        f.write('\\end{tabular}\n')
+        f.write('\\caption{QCD Envelope}\n')
+        f.write('\\label{tab:mi_tabla}\n')
+        f.write('\\end{table}\n')
+
 
 def read_stuff(filename):
     with open(filename, 'r') as file:
@@ -161,20 +224,36 @@ categories = ["baseline", "resolved_1b","resolved_2b", "boosted_l", "boosted_m"]
 data = []
 data_stuff = []
 data_unc = []
+data_envelope = []
 for cat in categories:
     for ch in channels:
         ###### 2018
-        # txtname = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2018/cat_{}/24Apr/qcd_inviso__{}__lep1_eta.txt".format(cat,ch)
-        # ss_iso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2018/cat_{}/24Apr/n_ss_iso__{}__lep1_eta.txt".format(cat,ch)
-        # ss_inviso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2018/cat_{}/24Apr/n_ss_inviso__{}__lep1_eta.txt".format(cat,ch)
-        # os_inviso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2018/cat_{}/24Apr/n_os_inviso__{}__lep1_eta.txt".format(cat,ch)
-        # print(txtname)
+        # txtname = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2018/cat_{}/24May_QCD1/qcd_inviso__{}__lep1_eta.txt".format(cat,ch)
+        # ss_iso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2018/cat_{}/24May_QCD1/n_ss_iso__{}__lep1_eta.txt".format(cat,ch)
+        # ss_inviso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2018/cat_{}/24May_QCD1/n_ss_inviso__{}__lep1_eta.txt".format(cat,ch)
+        # os_inviso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2018/cat_{}/24May_QCD1/n_os_inviso__{}__lep1_eta.txt".format(cat,ch)
+        # wps_value = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2018/cat_{}/24May_QCD1/CD_regions__{}__lep1_eta.txt".format(cat,ch)
 
         ###### 2017
-        txtname = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2017/cat_{}/23Apr/qcd_inviso__{}__lep1_eta.txt".format(cat,ch)
-        ss_iso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2017/cat_{}/23Apr/n_ss_iso__{}__lep1_eta.txt".format(cat,ch)
-        ss_inviso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2017/cat_{}/23Apr/n_ss_inviso__{}__lep1_eta.txt".format(cat,ch)
-        os_inviso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2017/cat_{}/23Apr/n_os_inviso__{}__lep1_eta.txt".format(cat,ch)
+        txtname = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2017/cat_{}/24May_QCD1/qcd_inviso__{}__lep1_eta.txt".format(cat,ch)
+        ss_iso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2017/cat_{}/24May_QCD1/n_ss_iso__{}__lep1_eta.txt".format(cat,ch)
+        ss_inviso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2017/cat_{}/24May_QCD1/n_ss_inviso__{}__lep1_eta.txt".format(cat,ch)
+        os_inviso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2017/cat_{}/24May_QCD1/n_os_inviso__{}__lep1_eta.txt".format(cat,ch)
+
+        ###### 2016
+        # txtname = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2016/cat_{}/13May_QCD1/qcd_inviso__{}__lep1_eta.txt".format(cat,ch)
+        # ss_iso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2016/cat_{}/13May_QCD1/n_ss_iso__{}__lep1_eta.txt".format(cat,ch)
+        # ss_inviso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2016/cat_{}/13May_QCD1/n_ss_inviso__{}__lep1_eta.txt".format(cat,ch)
+        # os_inviso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2016/cat_{}/13May_QCD1/n_os_inviso__{}__lep1_eta.txt".format(cat,ch)
+        # wps_value = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2016/cat_{}/13May_QCD1/CD_regions__{}__lep1_eta.txt".format(cat,ch)
+
+        ###### 2016APV
+        # txtname = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2016APV/cat_{}/13May_QCD1/qcd_inviso__{}__lep1_eta.txt".format(cat,ch)
+        # ss_iso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2016APV/cat_{}/13May_QCD1/n_ss_iso__{}__lep1_eta.txt".format(cat,ch)
+        # ss_inviso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2016APV/cat_{}/13May_QCD1/n_ss_inviso__{}__lep1_eta.txt".format(cat,ch)
+        # os_inviso_name = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2016APV/cat_{}/13May_QCD1/n_os_inviso__{}__lep1_eta.txt".format(cat,ch)
+        # wps_value = "/eos/user/e/emartinv/cmt/FeaturePlotQCDTest/qcd_llr_2016APV/cat_{}/13May_QCD1/CD_regions__{}__lep1_eta.txt".format(cat,ch)
+
 
         fit_value, fit_err, mean_value, mean_err, std_value, std_err, std_star = read_stuff(txtname)
 
@@ -265,26 +344,47 @@ for cat in categories:
 
         data.append([cat, ch, ss_iso_value, ss_iso_error, os_inviso_value, os_inviso_error, ss_inviso_value, ss_inviso_error])
 
+        qcd_wps = ["vvv_vl", "vvl_vl", "vl_l", "l_m"]
+
+        # with open(wps_value, 'r') as file:
+        #         lines = file.readlines()
+        #         values = [float(line.split()[1]) for line in lines]
+        #         errors = [float(line.split()[2]) for line in lines]
+        #         max_wps_value = max(values)
+        #         max_value_line = values.index(max_wps_value)
+        #         max_wps_error = errors[max_value_line]
+        #         min_wps_value = min(values)
+        #         min_value_line = values.index(min_wps_value)
+        #         min_wps_error = errors[min_value_line]
+
+        # if std_value == "0":
+        #     unc_plus = ""
+        #     unc_minus = ""
+        # else:
+        #     # print("std", std_value)
+        #     unc_plus = max_wps_value - std_value
+        #     unc_plus = round(unc_plus, 3)
+        #     rel_unc_plus = (unc_plus / std_value) * 100
+        #     # print("unc_plus", unc_plus)
+        #     unc_minus = std_value - min_wps_value
+        #     unc_minus = round(unc_minus, 3)
+        #     rel_unc_minus = (unc_minus / std_value) * 100
+        #     rel_unc_plus = round(rel_unc_plus, 1)
+        #     rel_unc_minus = round(rel_unc_minus, 1)
+        # # print("max", max_wps_value, max_wps_error, "min", min_wps_value, min_wps_error)
+
+        # data_envelope.append([cat, ch, std_value, std_err, max_wps_value, max_wps_error, min_wps_value, min_wps_error, unc_plus, unc_minus, rel_unc_plus, rel_unc_minus])
+
 
         # if additional_syst != "-" and std_value != 0 and lnN != "-":
 
         #     full_lnN = sqrt(lnN**2 + additional_syst**2)
 
-qcd_wps = ["vvv_vl", "vvl_vl", "vl_l", "l_m", "NO_STR"]
-
-data_envelope = []
-
-for cat in categories:
-    for wp in qcd_wps:
-        for ch in channels:
-            C_name = "/eos/user/e/emartinv/cmt/FeaturePlot/qcd_llr_2017/cat_{}/23Apr__{}/yields/lep1_eta__{}_os_inviso__pg_plots_no_signal.json".format(cat,wp,ch)
-            D_name = "/eos/user/e/emartinv/cmt/FeaturePlot/qcd_llr_2017/cat_{}/23Apr__{}/yields/lep1_eta__{}_ss_inviso__pg_plots_no_signal.json".format(cat,wp,ch)
-
-            CD_ratio =             
 
 create_QCDdiagnosis_table(data)
 create_summary_test1(data_stuff)
 create_QCD_uncertainty(data_unc)
+# create_envelope_table(data_envelope)
 # create_QCDdiagnosis_table(ss_iso_value, ss_iso_error, os_inviso_value, os_inviso_error, ss_inviso_value, ss_inviso_error)
 
 

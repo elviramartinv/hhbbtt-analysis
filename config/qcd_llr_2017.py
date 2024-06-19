@@ -120,7 +120,7 @@ class Config(base_config):
     #     return ObjectCollection(processes), process_group_names, process_training_names
         
     def add_datasets(self):
-        skim_directory = "/eos/user/l/lportale/hhbbtautau/skims/SKIMS_UL17"
+        skim_directory = "/eos/cms/store/group/phys_b2g/HHbbtautau/skims_2017/"
 
         skimdatasets = {
             "dy":"DY_Incl",
@@ -129,7 +129,7 @@ class Config(base_config):
             "dy_2j":"DY_2J",
             "dy_PtZ_0To50":"DY_PtZ0To50",
             "dy_PtZ_50To100":"DY_PtZ50To100",
-            "dy_PtZ_100To250":"DY_PtZ100To250",
+            # "dy_PtZ_100To250":"DY_PtZ100To250",
             "dy_PtZ_250To400":"DY_PtZ250To400",
             "dy_PtZ_400To650":"DY_PtZ400To650",
             "dy_PtZ_650ToInf":"DY_PtZ650ToInf",
@@ -138,13 +138,13 @@ class Config(base_config):
             "tt_fh":"TT_Hadronic",
             "tth_bb":"ttHTobb",
             "tth_nonbb":"ttHToNonbb",
-            "tth_tautau":"ttHToTauTau",
+            # "tth_tautau":"ttHToTauTau",
             "data_mutau": "Muon",
             "data_etau":"EGamma",
             "data_tau":"Tau",
             "data_met":"MET",
-            "ST_tW_top":"ST_tW_top",
-            "ST_tW_antitop":"ST_tW_antitop",
+            # "ST_tW_top":"ST_tW_top",
+            # "ST_tW_antitop":"ST_tW_antitop",
             "WJets_HT0To70": "WJets_HT0To70", 
             "WJets_HT70To100": "WJets_HT70To100", 
             "WJets_HT100To200": "WJets_HT100To200", 
@@ -202,18 +202,21 @@ class Config(base_config):
                         allfiles = [re.search('output_(.*).root', file).group(1) for file in os.listdir(folder) if file.endswith('.root')]
 
                         skipFiles += [os.path.join(folder, f"output_{file}.root") for file in allfiles if file not in goodfiles]
+                        # print("skipFiles", skipFiles, "for dataset", dataset_name)  
             else:
                 folder = os.path.join(skim_directory, dataset)
                 goodfiles = os.path.join(folder, "goodfiles.txt")
 
                 if os.path.exists(goodfiles):
                     with open(goodfiles, "r") as f:
+                        # print(f)
                         goodfiles = f.read().splitlines()
+                        # print(goodfiles)
                     goodfiles = [re.search('output_(.*).root', file).group(1) for file in goodfiles]
                     allfiles = [re.search('output_(.*).root', file).group(1) for file in os.listdir(folder) if file.endswith('.root')]
 
                     skipFiles = [os.path.join(folder, f"output_{file}.root") for file in allfiles if file not in goodfiles]
-            
+                    # print("skipFiles", skipFiles, "for dataset", dataset_name)
                 else:
                     skipFiles = []
 
@@ -374,7 +377,7 @@ class Config(base_config):
                 "ST_tW_antitop", "ST_tW_top",
             ],
             "zh": [
-                "ZH_HToBB_ZToLL", "ZHToTauTau", "ZH_HToBB_ZToQQ"
+                "ZH_HToBB_ZToLL", "ZHToTauTau", "ZH_HToBB_ZToQQ",
             ],
             "wh": [
                 "WminusHToTauTau", "WplusHToTauTau",
@@ -384,8 +387,14 @@ class Config(base_config):
                 "WZ",  
                 "ZZ",  
             ],
+            # "ww": ["WW"],
+            # "wz": ["WZ"],
+            # "zz": ["ZZ"],
             "ttx": [
-                "TTZZ", "TTWW", "TTWZ", "TTWH", "TTZH", "TTWJetsToLNu", "TTWJetsToQQ", "TTZToLLNuNu", "TTZToQQ"
+                "TTZZ", "TTWW", "TTWZ", "TTWJetsToLNu", "TTWJetsToQQ", "TTZToLLNuNu", "TTZToQQ",
+            ],
+            "ttxh": [
+                "TTWH", "TTZH",
             ],
             "ggh": [
                 "GluGluHToTauTau",
@@ -405,7 +414,7 @@ class Config(base_config):
                         folder=os.path.join(skim_directory, "%s" % name),
                         process=self.processes.get(process),
                         file_pattern="output_.*root",
-                        skipFiles=skipFiles_dict[name],
+                        # skipFiles=skipFiles_dict[name],
                         xs=1.),  # already normalised to xs
                 )
                 # print("process", self.processes.get(process))

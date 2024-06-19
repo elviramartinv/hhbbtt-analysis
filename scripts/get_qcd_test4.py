@@ -6,22 +6,21 @@ parser.add_argument('-v', '--version', dest='version', default = None, help='ver
 options = parser.parse_args()
 
 
+##### NEED TO CHANGE THE REGIONS
+print("check the regions")
 
 command = ("law run FeaturePlot --version " + options.version + " --config-name qcd_llr_{} "
-        "--category-name {} --region-name {}_os_iso --process-group-name plots "
-        "--do-qcd True --tree-name HTauTauTree --stack True --MergeCategorization-version {} "
+        "--category-name {} --region-name {}_os_iso --FeaturePlot-hide-data False "
+        "--tree-name HTauTauTree --MergeCategorization-version {} --do-qcd True"
         "--MergeCategorizationStatsLLR-version {} --apply-weights True "
-        "--feature-names {} --is-llr --hide-data False --save-png --save-yields")
+        "--feature-names {} --FeaturePlot-is-llr --save-png --stack True")
 
 
 years = ["2016", "2016APV", "2017", "2018"]
-# years = ["2017"]
 channels = ["tautau", "mutau", "etau"]
-categories = ["baseline"]
-# categories = ["baseline", "resolved_1b", "resolved_2b"]
-# feature_names = ("Htt_mass,Htt_svfit_mass,Hbb_mass,lep1_eta,lep1_phi,lep1_pt,lep2_eta,lep2_pt,lep2_phi,lep1_deepTauVSmu,lep1_deepTauVSe,lep1_deepTauVSjet,"
-            # "lep2_deepTauVSmu,lep2_deepTauVSe,lep2_deepTauVSjet,bjet1_pt,bjet1_eta,bjet1_phi,bjet2_pt,bjet2_eta,bjet2_phi,bjet1_deepFlav,bjet2_deepFlav")
-feature_names =  ("bjet2_pt")
+categories = ["baseline", "resolved_1b", "resolved_2b", "boosted_l", "boosted_m"]
+feature_names = ("lep1_eta,lep2_eta,lep1_pt,lep2_pt,bjet1_pt,bjet1_eta,bjet2_pt,bjet2_eta,"
+                "met_pt,met_phi,Htt_svfit_mass,Htt_mass,Hbb_mass")
 
 params = OrderedDict()
 params["2016APV"] = (["2May"])

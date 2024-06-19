@@ -385,8 +385,14 @@ class Config(base_config):
                 "WZ",  
                 "ZZ",  
             ],
+            # "ww": ["WW"],
+            # "wz": ["WZ"],
+            # "zz": ["ZZ"],
             "ttx": [
-                "TTZZ", "TTWW", "TTWZ", "TTWH", "TTZH", "TTWJetsToLNu", "TTWJetsToQQ", "TTZToLLNuNu", "TTZToQQ"
+                "TTZZ", "TTWW", "TTWZ", "TTWJetsToLNu", "TTWJetsToQQ", "TTZToLLNuNu", "TTZToQQ"
+            ],
+            "ttxh": [
+                "TTWH", "TTZH",
             ],
             "ggh": [
                 "GluGluHToTauTau",
