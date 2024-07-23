@@ -514,4 +514,4 @@ class Config_2022(base_config):
         return weights
     
 
-config = Config_2022("2022_v12_postEE", year=2022, ecm=13.6, lumi_pb=27007.0)
+config = Config_2022("2022_v12_postEE", year=2022, ecm=13.6, lumi_pb=3082.8, isRun3=True)

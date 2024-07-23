@@ -9,14 +9,12 @@ from cmt.config.base_config import Config as cmt_config
 
 class Config(cmt_config):
     def __init__(self, *args, **kwargs):
-        # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
-        self.btag=DotDict(tight=0.7264, medium=0.2770, loose=0.0494)
         self.deeptau=DotDict(
-            vsjet=DotDict(VVVLoose=1, VVLoose=3, VLoose=7, Loose=15, Medium=31,
-                Tight=63, VTight=127, VVTight=255),
-            vse=DotDict(VVVLoose=1, VVLoose=3, VLoose=7, Loose=15, Medium=31,
-                Tight=63, VTight=127, VVTight=255),
-            vsmu=DotDict(VLoose=1, Loose=3, Medium=7, Tight=15),
+            vsjet=DotDict(VVVLoose=1, VVLoose=2, VLoose=3, Loose=4, Medium=5,
+                Tight=6, VTight=7, VVTight=8),
+            vse=DotDict(VVVLoose=1, VVLoose=2, VLoose=3, Loose=4, Medium=5,
+                Tight=6, VTight=7, VVTight=8),
+            vsmu=DotDict(VLoose=1, Loose=2, Medium=3, Tight=4),
         )
 
         self.channels = self.add_channels()
@@ -48,13 +46,15 @@ class Config(cmt_config):
                 "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium],
         }
         selection["os_inviso"] = {
-            "mutau": ["isOS == 1", "dau2_idDeepTau2018v2p5VSjet >= 1",
+            "mutau": ["isOS == 1", 
+                "dau2_idDeepTau2018v2p5VSjet >= %s" %self.deeptau.vsjet.VVVLoose,
                 "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
-            "etau": ["isOS == 1", "dau2_idDeepTau2018v2p5VSjet >= 1",
+            "etau": ["isOS == 1", 
+                "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.VVVLoose,
                 "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
             "tautau": ["isOS == 1",
                 "dau1_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium,
-                "dau2_idDeepTau2018v2p5VSjet >= 1",
+                "dau2_idDeepTau2018v2p5VSjet >= $s" % self.deeptau.vsjet.VVVLoose,
                 "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
         }
         selection["ss_iso"] = {
@@ -67,13 +67,15 @@ class Config(cmt_config):
                 "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium],
         }
         selection["ss_inviso"] = {
-            "mutau": ["isOS == 0", "dau2_idDeepTau2018v2p5VSjet >= 1",
+            "mutau": ["isOS == 0", 
+                "dau2_idDeepTau2018v2p5VSjet %s" % self.deeptau.vsjet.VVVLoose,
                 "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
-            "etau": ["isOS == 0", "dau2_idDeepTau2018v2p5VSjet >= 1",
+            "etau": ["isOS == 0", 
+                "dau2_idDeepTau2018v2p5VSjet >= %s" %self.deeptau.vsjet.VVVLoose,
                 "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
             "tautau": ["isOS == 0",
                 "dau1_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.Medium,
-                "dau2_idDeepTau2018v2p5VSjet >= 1",
+                "dau2_idDeepTau2018v2p5VSjet >= %s" % self.deeptau.vsjet.VVVLoose,
                 "dau2_idDeepTau2018v2p5VSjet < %s" % self.deeptau.vsjet.Medium],
         }
         regions = []
@@ -105,7 +107,7 @@ class Config(cmt_config):
         reject_sel = ["pairType == -31415"]
 
         sel = DotDict()
-        btag = kwargs.pop("btag", "Jet_btagDeepFlavB.at(bjet{}_JetIdx)")
+        btag = kwargs.pop("btag", "Jet_btagPNetB.at(bjet{}_JetIdx)")
         df = lambda i, op, wp: "{} {} {}".format(btag.format(i), op, self.btag[wp])
         sel["btag"] = DotDict(
             m_first=[df(1, ">", "medium")],
@@ -209,22 +211,29 @@ class Config(cmt_config):
 
     def add_processes(self):
         processes = [
-            Process("ggf", Label("HH_{ggF}"), color=(0, 0, 0), isSignal=True, llr_name="ggH"),
+            Process("ggf", Label("HH_{ggF}"), color=(0, 0, 0), isSignal=True),
             Process("ggf_sm", Label("HH_{ggF}"), color=(0, 0, 0), isSignal=True,
-                parent_process="ggf", llr_name="ggHH_kl_1_kt_1_hbbhtt"),
-            Process("ggf_0_1", Label("HH_{ggF}^{(0, 1)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="ggf"),
-            Process("ggf_2p45_1", Label("HH_{ggF}^{(2.45, 1)}"), color=(0, 0, 0), isSignal=True,
+            Process("ggf_0_1_0", Label("HH_{ggf}^{(0,1,0)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="ggf"),
-            Process("ggf_5_1", Label("HH_{ggF}^{(5, 1)}"), color=(0, 0, 0), isSignal=True,
+            Process("ggf_0_1_1", Label("HH_{ggf}^{(0,1,1)}"), color=(0, 0, 0), isSignal=True,
+                parent_process="ggf"),
+            Process("ggf_1_1_0p10", Label("HH_{ggf}^{(1,1,0.1)}"), color=(0, 0, 0), isSignal=True,
+                parent_process="ggf"),
+            Process("ggf_1_1_0p35", Label("HH_{ggf}^{(1,1,0.35)}"), color=(0, 0, 0), isSignal=True,
+                parent_process="ggf"),
+            Process("ggf_1_1_3", Label("HH_{ggf}^{(1,1,3)}"), color=(0, 0, 0), isSignal=True,
+                parent_process="ggf"),
+            Process("ggf_1_1_m2", Label("HH_{ggf}^{(1,1,2)}"), color=(0, 0, 0), isSignal=True,
+                parent_process="ggf"),
+            Process("ggf_2p45_1_0", Label("HH_{ggf}^{(2.45,1,0)}"), color=(0, 0, 0), isSignal=True,
+                parent_process="ggf"),
+            Process("ggf_5_1_0", Label("HH_{ggf}^{(5,1,0)}"), color=(0, 0, 0), isSignal=True,
                 parent_process="ggf"),
 
-            Process("vbf", Label("HH_{VBF}"), color=(0, 0, 0), isSignal=True, llr_name="qqH"),
-            Process("vbf_sm", Label("HH_{VBF}"), color=(0, 0, 0), isSignal=True, parent_process="vbf"),
-            Process("vbf_0p5_1_1", Label("HH_{VBF}^{(0.5,1,1)}"), color=(0, 0, 0),
-                isSignal=True, parent_process="vbf"),
-            Process("vbf_1p5_1_1", Label("HH_{VBF}^{(1.5,1,1)}"), color=(0, 0, 0),
-                isSignal=True, parent_process="vbf"),
+            Process("vbf", Label("HH_{VBF}"), color=(0, 0, 0), isSignal=True),
+            Process("vbf_sm", Label("HH_{VBF}"), color=(0, 0, 0), isSignal=True, 
+                parent_process="vbf"),
             Process("vbf_1_0_1", Label("HH_{VBF}^{(1,0,1)}"), color=(255, 153, 0),
                 isSignal=True, parent_process="vbf"),
             Process("vbf_1_1_0", Label("HH_{VBF}^{(1,1,0)}"), color=(0, 0, 0),
@@ -233,6 +242,22 @@ class Config(cmt_config):
                 color=(0, 0, 0), isSignal=True, parent_process="vbf"),
             Process("vbf_1_2_1", Label("HH_{VBF}^{(1,2,1)}"),
                 color=(255, 102, 102), isSignal=True, parent_process="vbf"),
+            Process("vbf_1p74_1p37_14p4", Label("HH_{VBF}^{(1.74,1.37,14.4)"), color=(0, 0, 0), isSignal=True,
+                parent_process="vbf"),
+            Process("vbf_m0p012_0p030_10p2", Label("HH_{VBF}^{(0.012,0.03,10.2)}"), color=(0, 0, 0), isSignal=True,
+                parent_process="vbf"),
+            Process("vbf_m0p758_1p44_m19p3", Label("HH_{VBF}^{(0.758,1.44,19.3)}"), color=(0, 0, 0), isSignal=True,
+                parent_process="vbf"),
+            Process("vbf_m0p962_0p959_m1p43", Label("HH_{VBF}^{(0.962,0.959,1.43)}"), color=(0, 0, 0), isSignal=True,
+                parent_process="vbf"),
+            Process("vbf_m1p21_1p94_m0p94", Label("HH_{VBF}^{(1.21,1.94,0.94)}"), color=(0, 0, 0), isSignal=True,
+                parent_process="vbf"),
+            Process("vbf_m1p60_2p72_m1p36", Label("HH_{VBF}^{(1.6,2.72,1.36)}"), color=(0, 0, 0), isSignal=True,
+                parent_process="vbf"),
+            Process("vbf_m1p38_3p57_m3p39", Label("HH_{VBF}^{(1.38,3.57,3.39)}"), color=(0, 0, 0), isSignal=True,
+                parent_process="vbf"),
+            Process("vbf_m2p12_3p87_m5p96", Label("HH_{VBF}^{(2.12,3.87,5.96)}"), color=(0, 0, 0), isSignal=True,
+                parent_process="vbf")
 
             Process("dy", Label("DY"), color=(255, 102, 102), isDY=True, llr_name="DY"),
             Process("dy_high", Label("DY"), color=(255, 102, 102), isDY=True, parent_process="dy"),
@@ -682,8 +707,8 @@ class Config(cmt_config):
             Feature("genWeight", "genWeight", binning=(20, 0, 2),
                 x_title=Label("genWeight")),
             Feature("puWeight", "puWeight", binning=(20, 0, 2),
-                x_title=Label("puWeight")),
-                #systematics=["pu"]),
+                x_title=Label("puWeight"),
+                systematics=["pu"]),
             Feature("prescaleWeight", "prescaleWeight", binning=(20, 0, 2),
                 x_title=Label("prescaleWeight")),
             Feature("trigSF", "trigSF", binning=(20, 0, 2),

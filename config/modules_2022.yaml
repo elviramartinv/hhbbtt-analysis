@@ -54,6 +54,7 @@ hhlepton:
         isMC: self.dataset.process.isMC
         isV10: self.dataset.has_tag("nanoV10")
         year: self.config.year
+        isRun3: self.config.get_aux("isRun3", False)
         runEra: self.dataset.runEra
         runPeriod: self.dataset.runPeriod
         vvvl_vsjet: self.config.deeptau.vsjet.VVVLoose
